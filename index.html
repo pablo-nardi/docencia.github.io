@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DB·Didáctico — Índice</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  [data-theme="dark"] {
+    --bg:        #0c0e13;
+    --surface:   #11141b;
+    --surface2:  #181c26;
+    --border:    #22273a;
+    --text:      #e2e4ee;
+    --muted:     #505570;
+    --muted2:    #7a8099;
+    --nav-bg:    #0e1018;
+    --nav-border:#1e2235;
+  }
+  [data-theme="light"] {
+    --bg:        #f2f4f8;
+    --surface:   #ffffff;
+    --surface2:  #eef0f5;
+    --border:    #d2d6e8;
+    --text:      #1a1d2a;
+    --muted:     #8890aa;
+    --muted2:    #5a6280;
+    --nav-bg:    #ffffff;
+    --nav-border:#d2d6e8;
+  }
+  :root {
+    --green:       #00c98a;
+    --green-dim:   rgba(0,201,138,0.08);
+    --green-border:rgba(0,201,138,0.25);
+    --blue:        #4a7de0;
+    --blue-dim:    rgba(74,125,224,0.08);
+    --blue-border: rgba(74,125,224,0.25);
+    --yellow:      #c89a00;
+    --red:         #e03c3c;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Lato', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    transition: background .22s, color .22s;
+  }
+
+  /* ── NAVBAR ─────────────────────────────────── */
+  .navbar {
+    height: 40px;
+    background: var(--nav-bg);
+    border-bottom: 1px solid var(--nav-border);
+    display: flex; align-items: center;
+    padding: 0 16px; gap: 4px;
+    position: sticky; top: 0; z-index: 100;
+    transition: background .22s, border-color .22s;
+  }
+  .nav-brand {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .7rem; font-weight: 600; color: var(--green);
+    display: flex; align-items: center; gap: 6px;
+    margin-right: 8px; white-space: nowrap;
+  }
+  .nav-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--green); box-shadow: 0 0 5px var(--green);
+  }
+  .nav-divider { width: 1px; height: 16px; background: var(--border); margin: 0 4px; }
+  .nav-link {
+    font-family: 'Lato', sans-serif;
+    font-size: .72rem; font-weight: 700; color: var(--muted);
+    background: transparent; border: none;
+    padding: 4px 9px; border-radius: 5px;
+    cursor: pointer; text-decoration: none;
+    transition: color .14s, background .14s; white-space: nowrap;
+  }
+  .nav-link:hover  { color: var(--text); background: var(--surface2); }
+  .nav-link.active { color: var(--text); background: var(--surface2); }
+  .nav-spacer { flex: 1; }
+
+  .theme-toggle {
+    display: flex; align-items: center; gap: 6px;
+    cursor: pointer; user-select: none;
+  }
+  .toggle-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .63rem; color: var(--muted); white-space: nowrap;
+  }
+  .toggle-track {
+    width: 34px; height: 18px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 20px; position: relative;
+    transition: background .2s, border-color .2s;
+  }
+  [data-theme="dark"] .toggle-track { background: rgba(0,201,138,.16); border-color: rgba(0,201,138,.3); }
+  .toggle-thumb {
+    position: absolute; top: 2px; left: 2px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--muted); transition: left .2s, background .2s;
+  }
+  [data-theme="dark"] .toggle-thumb { left: 18px; background: var(--green); }
+  .toggle-icon { font-size: .78rem; }
+
+  /* ── HERO ────────────────────────────────────── */
+  .hero {
+    padding: 56px 24px 44px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 50% -5%, rgba(0,201,138,.08) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase;
+    color: var(--muted2); background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 4px 12px; border-radius: 20px; margin-bottom: 18px;
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 4.5vw, 3rem);
+    font-weight: 800; line-height: 1.1; margin-bottom: 12px;
+  }
+  .hero h1 span { color: var(--green); }
+  .hero p {
+    color: var(--muted2); font-size: .93rem;
+    max-width: 480px; margin: 0 auto; line-height: 1.65;
+  }
+
+  /* ── MAIN ────────────────────────────────────── */
+  .container { max-width: 760px; margin: 0 auto; padding: 0 20px; }
+  .content   { padding: 44px 0 60px; }
+
+  /* ── TOPIC GROUP ─────────────────────────────── */
+  .topic-group { margin-bottom: 38px; }
+  .group-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .68rem; letter-spacing: 2.5px; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 12px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .group-label::after { content:''; flex:1; height:1px; background: var(--border); }
+
+  /* ── CARD ────────────────────────────────────── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    display: flex; align-items: center; gap: 16px;
+    text-decoration: none; color: inherit;
+    transition: border-color .18s, transform .15s, box-shadow .18s;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+  .card:hover {
+    border-color: var(--green-border);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0,0,0,.18);
+  }
+  .card:hover .card-arrow { color: var(--green); transform: translateX(3px); }
+
+  .card-icon {
+    font-size: 1.6rem;
+    width: 48px; height: 48px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: border-color .18s;
+  }
+  .card:hover .card-icon { border-color: var(--green-border); }
+
+  .card-body { flex: 1; min-width: 0; }
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: .97rem; font-weight: 700;
+    margin-bottom: 3px; color: var(--text);
+  }
+  .card-desc {
+    font-size: .82rem; color: var(--muted2); line-height: 1.5;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .card-meta {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0;
+  }
+  .badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .65rem; padding: 2px 8px; border-radius: 20px;
+    white-space: nowrap;
+  }
+  .badge-green  { background: var(--green-dim);  color: var(--green);  border: 1px solid var(--green-border); }
+  .badge-blue   { background: var(--blue-dim);   color: var(--blue);   border: 1px solid var(--blue-border); }
+  .badge-gray   { background: var(--surface2);   color: var(--muted2); border: 1px solid var(--border); }
+
+  .card-arrow {
+    font-size: .9rem; color: var(--muted);
+    transition: color .15s, transform .15s;
+    margin-left: 4px;
+  }
+
+  /* ── COMING SOON ─────────────────────────────── */
+  .card.coming {
+    opacity: .5; cursor: default;
+    pointer-events: none;
+  }
+  .card.coming:hover { transform: none; box-shadow: none; border-color: var(--border); }
+
+  /* ── FOOTER ──────────────────────────────────── */
+  .footer {
+    text-align: center; padding: 28px 20px;
+    border-top: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .7rem; color: var(--muted); letter-spacing: .5px;
+  }
+
+  @media(max-width:520px){
+    .card-desc  { display: none; }
+    .navbar     { padding: 0 10px; }
+    .toggle-label { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-brand">
+    <div class="nav-dot"></div>
+    DB·Didáctico
+  </div>
+  <div class="nav-divider"></div>
+  <a class="nav-link active" href="#">Índice</a>
+  <div class="nav-spacer"></div>
+  <div class="theme-toggle" onclick="toggleTheme()" title="Cambiar tema">
+    <span class="toggle-icon">☀️</span>
+    <div class="toggle-track"><div class="toggle-thumb"></div></div>
+    <span class="toggle-icon">🌙</span>
+    <span class="toggle-label" id="theme-label">Oscuro</span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">📚 Base de Datos · Material Didáctico</div>
+  <h1>Índice de <span>Contenidos</span></h1>
+  <p>Todos los materiales interactivos del curso, organizados por tema. Hacé click en cualquier card para abrir el ejercicio.</p>
+</div>
+
+<!-- CONTENIDO -->
+<div class="container">
+<div class="content">
+
+  <!--Teoria -->
+  <div class="topic-group">
+      
+      <div class="group-label">Teoria</div>
+
+      <a class="card" href="teoria-er.html">
+        <div class="card-icon">🔗</div>
+        <div class="card-body">
+          <div class="card-title">Apunte teoria</div>
+          <div class="card-desc">Resumen del apunte en formato HTML</div>
+        </div>
+        <div class="card-meta">
+          <span class="badge badge-green">Interactivo</span>
+          <span class="badge badge-blue">N a N</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </a>
+
+      <a class="card" href="veterinaria-tablas.html">
+        <div class="card-icon">🔗</div>
+        <div class="card-body">
+          <div class="card-title">Tablas de prueba</div>
+          <div class="card-desc">Tablas basicas para trabajar ejemplos</div>
+        </div>
+        <div class="card-meta">
+          <span class="badge badge-green">Interactivo</span>
+          <span class="badge badge-blue">N a N</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </a>
+  </div>
+
+  <!-- RELACIONES -->
+  <div class="topic-group">
+    
+    <div class="group-label">Relaciones entre tablas</div>
+
+    <a class="card" href="nn-interactivo-completo.html">
+      <div class="card-icon">🔗</div>
+      <div class="card-body">
+        <div class="card-title">Relaciones N a N — Interactivo</div>
+        <div class="card-desc">Diseño incorrecto (FK directas) vs diseño correcto (tabla intermedia). Tablas en vivo con validación de integridad.</div>
+      </div>
+      <div class="card-meta">
+        <span class="badge badge-green">Interactivo</span>
+        <span class="badge badge-blue">N a N</span>
+      </div>
+      <span class="card-arrow">→</span>
+    </a>
+
+    <div class="card coming">
+      <div class="card-icon">➡️</div>
+      <div class="card-body">
+        <div class="card-title">Relaciones 1 a 1</div>
+        <div class="card-desc">Próximamente.</div>
+      </div>
+      <div class="card-meta">
+        <span class="badge badge-gray">Próximamente</span>
+      </div>
+    </div>
+
+  </div>
+  
+  <!-- NORMALIZACIÓN -->
+  <div class="topic-group">
+    <div class="group-label">Normalización</div>
+
+    <div class="card coming">
+      <div class="card-icon">📐</div>
+      <div class="card-body">
+        <div class="card-title">Formas Normales — 1FN, 2FN, 3FN</div>
+        <div class="card-desc">Próximamente.</div>
+      </div>
+      <div class="card-meta">
+        <span class="badge badge-gray">Próximamente</span>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">DB·Didáctico · Base de Datos · Material de estudio</div>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const dark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', dark ? 'light' : 'dark');
+    document.getElementById('theme-label').textContent = dark ? 'Claro' : 'Oscuro';
+  }
+</script>
+</body>
+</html>
