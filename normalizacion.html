@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Normalización · DB·Didáctico</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Lato:ital,wght@0,300;0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ══ THEMES */
+[data-theme="dark"]{
+  --bg:#0a0c11;--surf:#0f1219;--surf2:#151922;--surf3:#1b2030;
+  --brd:#1c2236;--text:#dde0ee;--muted:#464e68;--muted2:#6b7490;
+  --nav:#0d1018;--inp:#0f1219;--thead:#151922;
+  --rb:rgba(255,255,255,.025);--codebg:#07090d;--sh:rgba(0,0,0,.6);
+}
+[data-theme="light"]{
+  --bg:#eceff8;--surf:#fff;--surf2:#e4e8f4;--surf3:#d8ddf0;
+  --brd:#ccd2e8;--text:#14172a;--muted:#8a92ab;--muted2:#52587a;
+  --nav:#fff;--inp:#fff;--thead:#e4e8f4;
+  --rb:rgba(0,0,0,.045);--codebg:#0b0d16;--sh:rgba(0,0,0,.1);
+}
+:root{
+  --c1:#e85d30;  --c1d:rgba(232,93,48,.09);  --c1b:rgba(232,93,48,.3);
+  --c2:#d4a017;  --c2d:rgba(212,160,23,.09); --c2b:rgba(212,160,23,.3);
+  --c3:#1faa6b;  --c3d:rgba(31,170,107,.09); --c3b:rgba(31,170,107,.27);
+  --ci:#3a8ce8;  --cid:rgba(58,140,232,.09); --cib:rgba(58,140,232,.27);
+  --cv:#8b62e8;  --cvd:rgba(139,98,232,.09); --cvb:rgba(139,98,232,.27);
+  --cr:#e03c55;  --crd:rgba(224,60,85,.09);  --crb:rgba(224,60,85,.28);
+  --ct:#00bfa5;  --ctd:rgba(0,191,165,.09);  --ctb:rgba(0,191,165,.27);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Lato',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;transition:background .22s,color .22s;padding-bottom:80px;}
+#prog{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--c1),var(--c2),var(--c3));z-index:500;transition:width .1s linear;pointer-events:none;}
+
+/* ══ NAVBAR */
+.nb{height:40px;background:var(--nav);border-bottom:1px solid var(--brd);display:flex;align-items:center;padding:0 16px;gap:2px;position:sticky;top:0;z-index:200;overflow-x:auto;scrollbar-width:none;transition:background .22s;}
+.nb::-webkit-scrollbar{display:none;}
+.nb-brand{font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:600;color:var(--c1);display:flex;align-items:center;gap:6px;margin-right:6px;white-space:nowrap;flex-shrink:0;text-decoration:none;}
+.nb-dot{width:6px;height:6px;border-radius:50%;background:var(--c1);}
+.nb-sep{width:1px;height:16px;background:var(--brd);margin:0 5px;flex-shrink:0;}
+.nl{font-family:'JetBrains Mono',monospace;font-size:.63rem;color:var(--muted);background:transparent;border:none;padding:3px 7px;border-radius:4px;cursor:pointer;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:color .14s,background .14s;}
+.nl:hover{color:var(--text);background:var(--surf2);}
+.nl.on{color:var(--c1);background:var(--c1d);}
+.nsp{flex:1;min-width:8px;}
+.tt{display:flex;align-items:center;gap:5px;cursor:pointer;user-select:none;flex-shrink:0;}
+.tl{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--muted);}
+.tk{width:32px;height:17px;background:var(--surf2);border:1px solid var(--brd);border-radius:20px;position:relative;transition:background .2s,border-color .2s;}
+[data-theme="dark"] .tk{background:rgba(232,93,48,.18);border-color:rgba(232,93,48,.35);}
+.th2{position:absolute;top:2px;left:2px;width:11px;height:11px;border-radius:50%;background:var(--muted);transition:left .2s,background .2s;}
+[data-theme="dark"] .th2{left:17px;background:var(--c1);}
+
+/* ══ HERO */
+.hero{padding:54px 24px 44px;text-align:center;border-bottom:1px solid var(--brd);position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 50% 60% at 20% 50%,rgba(232,93,48,.07) 0%,transparent 60%),
+  radial-gradient(ellipse 50% 60% at 80% 50%,rgba(31,170,107,.06) 0%,transparent 60%),
+  radial-gradient(ellipse 40% 55% at 50% -5%,rgba(212,160,23,.06) 0%,transparent 60%);}
+.eyebrow{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted2);background:var(--surf2);border:1px solid var(--brd);padding:4px 14px;border-radius:20px;margin-bottom:18px;}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,5.5vw,3.3rem);font-weight:800;line-height:1.06;margin-bottom:13px;}
+.hero h1 .h1{color:var(--c1);}
+.hero h1 .h2{color:var(--c2);}
+.hero h1 .h3{color:var(--c3);}
+.hero-sub{color:var(--muted2);font-size:.93rem;max-width:540px;margin:0 auto 28px;line-height:1.65;}
+.chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;}
+.chip{font-family:'JetBrains Mono',monospace;font-size:.67rem;padding:4px 12px;border-radius:20px;text-decoration:none;transition:transform .15s,box-shadow .15s;display:inline-block;}
+.chip:hover{transform:translateY(-2px);box-shadow:0 4px 16px var(--sh);}
+
+/* ══ LAYOUT */
+.wrap{max-width:980px;margin:0 auto;padding:0 24px;}
+.sec{padding-top:64px;padding-bottom:48px;border-bottom:1px solid var(--brd);}
+.sec:last-child{border-bottom:none;}
+.sec-hd{display:flex;align-items:flex-start;gap:16px;margin-bottom:30px;}
+.sec-num{font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:600;padding:4px 9px;border-radius:6px;flex-shrink:0;margin-top:5px;letter-spacing:.6px;text-transform:uppercase;}
+.sec-title{font-family:'Syne',sans-serif;font-size:clamp(1.3rem,3.5vw,1.95rem);font-weight:800;line-height:1.1;}
+.sec-sub{font-family:'JetBrains Mono',monospace;font-size:.71rem;color:var(--muted2);margin-top:6px;}
+
+/* ══ PROSE */
+.prose{font-size:.91rem;color:var(--muted2);margin-bottom:14px;line-height:1.8;}
+.prose strong{color:var(--text);font-weight:700;}
+.prose code{font-family:'JetBrains Mono',monospace;background:var(--surf2);border:1px solid var(--brd);padding:1px 6px;border-radius:4px;font-size:.82em;}
+.hdiv{height:1px;background:var(--brd);margin:22px 0;}
+
+/* ══ CALLOUTS */
+.callout{border-radius:10px;padding:14px 18px;margin:16px 0;display:flex;gap:12px;align-items:flex-start;font-size:.86rem;line-height:1.68;}
+.cmk{font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:600;flex-shrink:0;margin-top:1px;padding:2px 7px;border-radius:4px;letter-spacing:.3px;}
+.cbody{color:var(--muted2);}
+.cbody strong{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;display:block;margin-bottom:4px;}
+.c1{background:var(--c1d);border:1px solid var(--c1b);} .c1 .cmk{background:var(--c1d);color:var(--c1);border:1px solid var(--c1b);} .c1 .cbody strong{color:var(--c1);}
+.c2{background:var(--c2d);border:1px solid var(--c2b);} .c2 .cmk{background:var(--c2d);color:var(--c2);border:1px solid var(--c2b);} .c2 .cbody strong{color:var(--c2);}
+.c3{background:var(--c3d);border:1px solid var(--c3b);} .c3 .cmk{background:var(--c3d);color:var(--c3);border:1px solid var(--c3b);} .c3 .cbody strong{color:var(--c3);}
+.ci{background:var(--cid);border:1px solid var(--cib);} .ci .cmk{background:var(--cid);color:var(--ci);border:1px solid var(--cib);} .ci .cbody strong{color:var(--ci);}
+.cv{background:var(--cvd);border:1px solid var(--cvb);} .cv .cmk{background:var(--cvd);color:var(--cv);border:1px solid var(--cvb);} .cv .cbody strong{color:var(--cv);}
+.cr{background:var(--crd);border:1px solid var(--crb);} .cr .cmk{background:var(--crd);color:var(--cr);border:1px solid var(--crb);} .cr .cbody strong{color:var(--cr);}
+.ct{background:var(--ctd);border:1px solid var(--ctb);} .ct .cmk{background:var(--ctd);color:var(--ct);border:1px solid var(--ctb);} .ct .cbody strong{color:var(--ct);}
+
+/* ══ CARDS */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:18px 0;}
+.card{background:var(--surf);border:1px solid var(--brd);border-radius:10px;padding:17px 18px;transition:border-color .18s,transform .15s,box-shadow .15s;}
+.card:hover{transform:translateY(-2px);box-shadow:0 6px 22px var(--sh);}
+.ctag{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+.chead{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--text);margin-bottom:7px;}
+.cbod{font-size:.82rem;color:var(--muted2);line-height:1.6;}
+.cbod strong{color:var(--text);}
+
+/* ══ UL */
+.ul{list-style:none;margin:10px 0 16px;display:flex;flex-direction:column;gap:8px;}
+.ul li{font-size:.87rem;color:var(--muted2);line-height:1.65;display:flex;gap:10px;align-items:flex-start;}
+.ul li::before{content:'→';color:var(--c1);font-family:'JetBrains Mono',monospace;font-size:.72rem;flex-shrink:0;margin-top:4px;}
+.ul li strong{color:var(--text);}
+
+/* ══ FORMA NORMAL BADGE */
+.fn-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;margin-bottom:14px;}
+.fn1{background:var(--c1d);border:1px solid var(--c1b);color:var(--c1);}
+.fn2{background:var(--c2d);border:1px solid var(--c2b);color:var(--c2);}
+.fn3{background:var(--c3d);border:1px solid var(--c3b);color:var(--c3);}
+
+/* ══ FORMAS NORMALES STEPPER */
+.fn-steps{display:flex;gap:0;margin:20px 0;overflow-x:auto;}
+.fn-step{flex:1;min-width:160px;background:var(--surf);border:1px solid var(--brd);padding:16px 16px 14px;position:relative;transition:border-color .18s;}
+.fn-step:first-child{border-radius:10px 0 0 10px;}
+.fn-step:last-child{border-radius:0 10px 10px 0;}
+.fn-step+.fn-step{border-left:none;}
+.fn-step .fn-num{font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+.fn-step .fn-name{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;margin-bottom:8px;}
+.fn-step .fn-rule{font-size:.79rem;color:var(--muted2);line-height:1.55;}
+.fn-step .fn-rule code{font-family:'JetBrains Mono',monospace;font-size:.78em;background:var(--surf2);padding:1px 5px;border-radius:3px;border:1px solid var(--brd);}
+.fn-step.s1{border-top:3px solid var(--c1);}
+.fn-step.s2{border-top:3px solid var(--c2);}
+.fn-step.s3{border-top:3px solid var(--c3);}
+.fn-step.s1 .fn-num{color:var(--c1);}
+.fn-step.s2 .fn-num{color:var(--c2);}
+.fn-step.s3 .fn-num{color:var(--c3);}
+.fn-step.s1 .fn-name{color:var(--c1);}
+.fn-step.s2 .fn-name{color:var(--c2);}
+.fn-step.s3 .fn-name{color:var(--c3);}
+
+/* ══ TABLA DE DATOS (comparación antes/después) */
+.dt-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--brd);margin:14px 0;}
+table.dt{width:100%;border-collapse:collapse;font-size:.8rem;}
+table.dt thead tr{background:var(--thead);}
+table.dt thead th{padding:8px 12px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:.64rem;letter-spacing:.4px;color:var(--muted);border-bottom:1px solid var(--brd);white-space:nowrap;font-weight:500;}
+table.dt tbody tr{border-bottom:1px solid var(--rb);}
+table.dt tbody tr:last-child{border-bottom:none;}
+table.dt tbody td{padding:7px 12px;color:var(--muted2);white-space:nowrap;}
+.cell-err{color:var(--cr);font-family:'JetBrains Mono',monospace;font-size:.76rem;}
+.cell-ok{color:var(--c3);font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:600;}
+.cell-pk{color:var(--c3);font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:600;}
+.cell-fk{color:var(--ci);font-family:'JetBrains Mono',monospace;font-size:.76rem;}
+.cell-dup{background:rgba(224,60,85,.07);}
+.dt-label{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;display:flex;align-items:center;gap:7px;}
+.dt-label.bad{color:var(--cr);}
+.dt-label.good{color:var(--c3);}
+
+/* ══ INLINE TAGS */
+.t{display:inline-block;font-size:8px;padding:1px 5px;border-radius:3px;margin-left:3px;font-family:'JetBrains Mono',monospace;vertical-align:middle;line-height:1.5;}
+.tpk{background:rgba(31,170,107,.16);color:var(--c3);}
+.tfk{background:rgba(58,140,232,.14);color:var(--ci);}
+.terr{background:rgba(224,60,85,.14);color:var(--cr);}
+
+/* ══ PASO FLECHA (antes → después) */
+.transform-row{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:start;margin:18px 0;}
+.transform-arrow{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding-top:28px;}
+.arrow-sym{font-size:1.5rem;color:var(--c3);}
+.arrow-lbl{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--muted);white-space:nowrap;}
+@media(max-width:700px){.transform-row{grid-template-columns:1fr;}.transform-arrow{padding-top:0;flex-direction:row;}.arrow-sym{transform:rotate(90deg);}}
+
+/* ══ STEP CARDS (pasos del ejemplo) */
+.step-card{background:var(--surf);border:1px solid var(--brd);border-radius:10px;margin:18px 0;overflow:hidden;}
+.step-header{padding:12px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--brd);}
+.step-badge{font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:600;padding:3px 10px;border-radius:5px;flex-shrink:0;}
+.step-title{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;color:var(--text);}
+.step-body{padding:18px 18px 16px;}
+
+/* ══ TABS */
+.ex-tabs{display:flex;border-bottom:1px solid var(--brd);background:var(--surf);border-radius:10px 10px 0 0;overflow:hidden;}
+.ex-tab{flex:1;padding:11px 10px;background:transparent;border:none;font-family:'Syne',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;transition:all .18s;}
+.ex-tab:hover{color:var(--muted2);background:var(--surf2);}
+.ex-tab.on{color:var(--ci);border-bottom-color:var(--ci);background:var(--cid);}
+.ex-panel{display:none;border:1px solid var(--brd);border-top:none;border-radius:0 0 10px 10px;background:var(--surf);padding:26px;}
+.ex-panel.on{display:block;}
+
+/* ══ DBML */
+.dbml-wrap{position:relative;margin:16px 0;}
+.dbml-block{background:var(--codebg);border:1px solid var(--brd);border-radius:10px;padding:20px 20px 18px;overflow-x:auto;}
+.dbml-block pre{font-family:'JetBrains Mono',monospace;font-size:.79rem;line-height:1.75;color:#8baac8;white-space:pre;}
+.kw{color:#c792ea;} .tb{color:#ffcb6b;} .tp{color:#82aaff;} .pk{color:#1faa6b;} .rf{color:#89ddff;} .cm{color:#3d5065;font-style:italic;}
+.copy-btn{position:absolute;top:10px;right:10px;background:var(--surf2);border:1px solid var(--brd);color:var(--muted2);font-family:'JetBrains Mono',monospace;font-size:.65rem;padding:4px 10px;border-radius:5px;cursor:pointer;transition:all .14s;z-index:1;}
+.copy-btn:hover{color:var(--text);border-color:var(--c3);background:var(--c3d);}
+.copy-btn.done{color:var(--c3);border-color:var(--c3b);}
+
+/* ══ VS BOXES */
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;}
+@media(max-width:560px){.vs{grid-template-columns:1fr;}}
+.vs-box{border-radius:10px;padding:14px 16px;border:1px solid;}
+.vsr{background:var(--crd);border-color:var(--crb);}
+.vsg{background:var(--c3d);border-color:var(--c3b);}
+.vsl{font-family:'Syne',sans-serif;font-size:.8rem;font-weight:700;margin-bottom:9px;}
+.vsr .vsl{color:var(--cr);}
+.vsg .vsl{color:var(--c3);}
+.vs-body{font-size:.83rem;color:var(--muted2);line-height:1.6;}
+.vs-body strong{color:var(--text);}
+
+/* ══ VENTAJAS/DESVENTAJAS */
+.vd-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+@media(max-width:600px){.vd-grid{grid-template-columns:1fr;}}
+.vd-box{border-radius:10px;padding:18px;border:1px solid;}
+.vd-ok{background:var(--c3d);border-color:var(--c3b);}
+.vd-no{background:var(--crd);border-color:var(--crb);}
+.vd-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.vd-ok .vd-title{color:var(--c3);}
+.vd-no .vd-title{color:var(--cr);}
+.vd-item{font-size:.83rem;color:var(--muted2);line-height:1.6;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04);display:flex;gap:9px;align-items:flex-start;}
+[data-theme="light"] .vd-item{border-bottom-color:rgba(0,0,0,.05);}
+.vd-item:last-child{border-bottom:none;}
+.vd-icon{font-size:.75rem;flex-shrink:0;margin-top:2px;}
+.vd-item strong{color:var(--text);}
+
+/* ══ ANOMALIAS */
+.anom-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:16px 0;}
+.anom-card{background:var(--surf);border:1px solid var(--crb);border-radius:9px;padding:14px 15px;}
+.anom-tag{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:1.2px;text-transform:uppercase;color:var(--cr);margin-bottom:5px;}
+.anom-head{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:5px;}
+.anom-body{font-size:.79rem;color:var(--muted2);line-height:1.55;}
+
+/* ══ TOASTS */
+.twrap{position:fixed;bottom:18px;right:18px;display:flex;flex-direction:column;gap:6px;z-index:9999;pointer-events:none;}
+.toast{padding:10px 14px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.73rem;max-width:300px;line-height:1.5;animation:tIn .2s ease,tOut .26s ease 2.4s forwards;pointer-events:none;}
+.tok{background:var(--surf);border:1px solid var(--c3b);color:var(--c3);}
+@keyframes tIn{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}
+@keyframes tOut{to{opacity:0;transform:translateX(8px)}}
+
+@media(max-width:640px){.wrap{padding:0 14px;}.hero{padding:40px 14px 34px;}.grid{grid-template-columns:1fr;}.fn-steps{flex-direction:column;}.fn-step{border-radius:0!important;}.fn-step+.fn-step{border-left:1px solid var(--brd);border-top:none;}}
+</style>
+</head>
+<body>
+<div id="prog" style="width:0"></div>
+
+<!-- NAVBAR -->
+<nav class="nb">
+  <a class="nb-brand" href="#top"><div class="nb-dot"></div>DB·Didáctico</a>
+  <div class="nb-sep"></div>
+  <a class="nl on" href="#s1">1. ¿Qué es?</a>
+  <a class="nl" href="#s2">2. ¿Cuándo se usa?</a>
+  <a class="nl" href="#s3">3. Formas Normales</a>
+  <a class="nl" href="#s4">4. Ventajas y Desventajas</a>
+  <a class="nl" href="#s5">5. Ejemplos reales</a>
+  <a class="nl" href="#s6">6. DBML</a>
+  <div class="nsp"></div>
+  <div class="tt" onclick="toggleTheme()">
+    <span class="tl">claro</span>
+    <div class="tk"><div class="th2"></div></div>
+    <span class="tl" id="tlbl">oscuro</span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="eyebrow">TUP · UTN 2026 · Diseño de BD</div>
+  <h1><span class="h1">Nor</span><span class="h2">mali</span><span class="h3">zación</span></h1>
+  <p class="hero-sub">El proceso de organizar una base de datos para eliminar la redundancia y prevenir errores. Un lugar para cada dato, y cada dato en su lugar.</p>
+  <div class="chips">
+    <a href="#s1" class="chip" style="background:var(--c1d);border:1px solid var(--c1b);color:var(--c1)">¿Qué es?</a>
+    <a href="#s2" class="chip" style="background:var(--c2d);border:1px solid var(--c2b);color:var(--c2)">¿Cuándo se usa?</a>
+    <a href="#s3" class="chip" style="background:var(--c3d);border:1px solid var(--c3b);color:var(--c3)">Formas Normales</a>
+    <a href="#s4" class="chip" style="background:var(--cid);border:1px solid var(--cib);color:var(--ci)">Ventajas y Desventajas</a>
+    <a href="#s5" class="chip" style="background:var(--cvd);border:1px solid var(--cvb);color:var(--cv)">Ejemplos reales</a>
+    <a href="#s6" class="chip" style="background:var(--ctd);border:1px solid var(--ctb);color:var(--ct)">DBML</a>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- S1: ¿QUÉ ES? -->
+<section class="sec" id="s1">
+  <div class="sec-hd">
+    <div class="sec-num" style="background:var(--c1d);border:1px solid var(--c1b);color:var(--c1)">01</div>
+    <div>
+      <div class="sec-title">¿Qué es la Normalización?</div>
+      <div class="sec-sub">El problema que resuelve y cómo lo hace</div>
+    </div>
+  </div>
+
+  <p class="prose">La <strong>normalización</strong> es el proceso de organizar las tablas y columnas de una base de datos relacional siguiendo un conjunto de reglas llamadas <strong>Formas Normales (FN)</strong>. El objetivo es eliminar la redundancia de datos y prevenir las anomalías que aparecen cuando se insertan, actualizan o eliminan registros.</p>
+
+  <div class="callout c1">
+    <div class="cmk">def</div>
+    <div class="cbody">
+      <strong>Definición</strong>
+      Normalizar es descomponer tablas grandes y desordenadas en tablas más pequeñas, bien definidas y relacionadas entre sí, de modo que cada tabla tenga una única responsabilidad y cada dato esté almacenado en un solo lugar.
+    </div>
+  </div>
+
+  <div class="hdiv"></div>
+  <p class="prose"><strong>¿Qué pasa si no normalizamos?</strong> Una base de datos sin normalizar tiene <strong>anomalías</strong> — comportamientos incorrectos que aparecen al trabajar con los datos:</p>
+
+  <div class="anom-grid">
+    <div class="anom-card">
+      <div class="anom-tag">Anomalía 1</div>
+      <div class="anom-head">Inserción</div>
+      <div class="anom-body">No podés agregar ciertos datos sin agregar otros que no tenés. Ej: no podés registrar un nuevo proveedor si todavía no tiene productos.</div>
+    </div>
+    <div class="anom-card">
+      <div class="anom-tag">Anomalía 2</div>
+      <div class="anom-head">Actualización</div>
+      <div class="anom-body">Si un dato se repite en varias filas, tenés que actualizarlo en todas. Si olvidás una, la base de datos tiene información contradictoria.</div>
+    </div>
+    <div class="anom-card">
+      <div class="anom-tag">Anomalía 3</div>
+      <div class="anom-head">Eliminación</div>
+      <div class="anom-body">Al borrar una fila para eliminar un dato, perdés otros datos que estaban en la misma fila. Ej: al borrar el último pedido de un cliente, desaparecen sus datos.</div>
+    </div>
+  </div>
+
+  <div class="callout cr">
+    <div class="cmk">ejemplo</div>
+    <div class="cbody">
+      <strong>Tabla sin normalizar — el problema es visible</strong>
+      Si guardás "nombre del cliente", "ciudad del cliente" y "teléfono del cliente" en cada fila de la tabla de pedidos, tenés el nombre repetido N veces. Si el cliente cambia de teléfono, hay que actualizar N filas. Si te olvidás de una, la base de datos tiene dos teléfonos distintos para el mismo cliente — y no sabés cuál es el correcto.
+    </div>
+  </div>
+</section>
+
+<!-- S2: ¿CUÁNDO SE USA? -->
+<section class="sec" id="s2">
+  <div class="sec-hd">
+    <div class="sec-num" style="background:var(--c2d);border:1px solid var(--c2b);color:var(--c2)">02</div>
+    <div>
+      <div class="sec-title">¿Cuándo se usa?</div>
+      <div class="sec-sub">Las señales que indican que una tabla necesita ser normalizada</div>
+    </div>
+  </div>
+
+  <p class="prose">La normalización se aplica <strong>durante el diseño</strong> de la base de datos, antes de cargar datos reales. También se aplica cuando una base existente presenta problemas de inconsistencia.</p>
+
+  <div class="grid">
+    <div class="card" style="border-color:var(--c2b)">
+      <div class="ctag" style="color:var(--c2)">Señal 1</div>
+      <div class="chead">Datos repetidos</div>
+      <div class="cbod">Ves el mismo valor (nombre, ciudad, precio) repetido en muchas filas de la misma tabla. Si hay que cambiarlo, hay que actualizarlo en múltiples lugares.</div>
+    </div>
+    <div class="card" style="border-color:var(--c2b)">
+      <div class="ctag" style="color:var(--c2)">Señal 2</div>
+      <div class="chead">Celdas con múltiples valores</div>
+      <div class="cbod">Una columna guarda varios valores en la misma celda, separados por comas o espacios: <code>"Ana, Luis, Marta"</code> o <code>"Rojo/Azul"</code>. Imposible de filtrar y consultar correctamente.</div>
+    </div>
+    <div class="card" style="border-color:var(--c2b)">
+      <div class="ctag" style="color:var(--c2)">Señal 3</div>
+      <div class="chead">Una tabla hace "demasiadas cosas"</div>
+      <div class="cbod">La tabla mezcla información de conceptos diferentes. Una tabla "Ventas" que también guarda datos del vendedor, del cliente y del producto en las mismas filas.</div>
+    </div>
+    <div class="card" style="border-color:var(--c2b)">
+      <div class="ctag" style="color:var(--c2)">Señal 4</div>
+      <div class="chead">Muchas columnas vacías (NULL)</div>
+      <div class="cbod">Muchas filas tienen NULL en la mayoría de las columnas porque solo aplican a ciertos registros. Señal de que la tabla está mezclando diferentes tipos de entidades.</div>
+    </div>
+  </div>
+
+  <div class="callout c2">
+    <div class="cmk">siempre</div>
+    <div class="cbody">
+      <strong>Regla de oro: primero se normaliza, después se desnormaliza si es necesario</strong>
+      La normalización es el punto de partida correcto. Luego, si el sistema crece mucho y las consultas se vuelven lentas, se puede desnormalizar <em>intencionalmente</em> en puntos específicos para ganar velocidad. Pero eso es una decisión consciente de un experto, no el punto de partida.
+    </div>
+  </div>
+</section>
+
+<!-- S3: FORMAS NORMALES -->
+<section class="sec" id="s3">
+  <div class="sec-hd">
+    <div class="sec-num" style="background:var(--c3d);border:1px solid var(--c3b);color:var(--c3)">03</div>
+    <div>
+      <div class="sec-title">Las Formas Normales</div>
+      <div class="sec-sub">Las reglas que se aplican en orden, una a la vez</div>
+    </div>
+  </div>
+
+  <p class="prose">Las formas normales son <strong>reglas que se aplican en orden secuencial</strong>. Para estar en 2FN, primero tenés que cumplir 1FN. Para estar en 3FN, primero tenés que cumplir 2FN. En la práctica, llegar a 3FN es el objetivo estándar en la mayoría de los sistemas.</p>
+
+  <div class="fn-steps">
+    <div class="fn-step s1">
+      <div class="fn-num">1FN</div>
+      <div class="fn-name">Primera Forma Normal</div>
+      <div class="fn-rule">
+        Eliminar <strong>grupos repetidos</strong> y <strong>valores no atómicos</strong>.<br><br>
+        Cada columna debe contener un <code>valor único</code>, no listas ni conjuntos. Cada fila debe ser única (tener PK). No puede haber columnas repetidas como <code>telefono_1</code>, <code>telefono_2</code>.
+      </div>
+    </div>
+    <div class="fn-step s2">
+      <div class="fn-num">2FN</div>
+      <div class="fn-name">Segunda Forma Normal</div>
+      <div class="fn-rule">
+        Estar en 1FN + eliminar <strong>dependencias parciales</strong>.<br><br>
+        Aplica solo cuando la PK es compuesta. Todo atributo no-clave debe depender de la <code>PK completa</code>, no solo de una parte de ella. Si un atributo depende de la mitad de la PK, se separa en otra tabla.
+      </div>
+    </div>
+    <div class="fn-step s3">
+      <div class="fn-num">3FN</div>
+      <div class="fn-name">Tercera Forma Normal</div>
+      <div class="fn-rule">
+        Estar en 2FN + eliminar <strong>dependencias transitivas</strong>.<br><br>
+        Ningún atributo no-clave debe depender de otro atributo no-clave. Si A → B → C (C depende de B, B depende de la PK), entonces C debe ir en su propia tabla con B como PK.
+      </div>
+    </div>
+  </div>
+
+  <div class="callout ci">
+    <div class="cmk">→</div>
+    <div class="cbody">
+      <strong>¿Qué significa "depender de"?</strong>
+      Un atributo B "depende funcionalmente" de A cuando dado un valor de A, siempre hay un único valor posible de B. Ejemplo: dado un <code>dni</code>, siempre hay un único <code>nombre</code> — el nombre <em>depende</em> del DNI. Si el nombre dependiera también de otra cosa (como del cargo en la empresa), habría una dependencia compleja.
+    </div>
+  </div>
+
+  <div class="hdiv"></div>
+  <p class="prose"><strong>Ejemplo rápido — el problema de la 1FN:</strong> una celda con múltiples valores</p>
+  <div class="dt-label bad">✕ &nbsp;Viola 1FN — una celda con múltiples teléfonos</div>
+  <div class="dt-wrap">
+    <table class="dt">
+      <thead><tr><th>id_cliente</th><th>nombre</th><th>telefonos</th><th>ciudad</th></tr></thead>
+      <tbody>
+        <tr><td class="cell-pk">1</td><td>Ana García</td><td class="cell-err">11-4444-5555, 11-6666-7777</td><td>Buenos Aires</td></tr>
+        <tr><td class="cell-pk">2</td><td>Luis Martínez</td><td class="cell-err">341-444-5555</td><td>Rosario</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="dt-label good">✓ &nbsp;Cumple 1FN — tabla separada para teléfonos</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div>
+      <div class="dt-wrap" style="margin-top:0">
+        <table class="dt">
+          <thead><tr><th>id_cliente <span class="t tpk">PK</span></th><th>nombre</th><th>ciudad</th></tr></thead>
+          <tbody>
+            <tr><td class="cell-pk">1</td><td>Ana García</td><td>Buenos Aires</td></tr>
+            <tr><td class="cell-pk">2</td><td>Luis Martínez</td><td>Rosario</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="dt-wrap" style="margin-top:0">
+        <table class="dt">
+          <thead><tr><th>id_tel <span class="t tpk">PK</span></th><th>id_cliente <span class="t tfk">FK</span></th><th>telefono</th></tr></thead>
+          <tbody>
+            <tr><td class="cell-pk">1</td><td class="cell-fk">1</td><td>11-4444-5555</td></tr>
+            <tr><td class="cell-pk">2</td><td class="cell-fk">1</td><td>11-6666-7777</td></tr>
+            <tr><td class="cell-pk">3</td><td class="cell-fk">2</td><td>341-444-5555</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S4: VENTAJAS Y DESVENTAJAS -->
+<section class="sec" id="s4">
+  <div class="sec-hd">
+    <div class="sec-num" style="background:var(--cid);border:1px solid var(--cib);color:var(--ci)">04</div>
+    <div>
+      <div class="sec-title">Ventajas y Desventajas</div>
+      <div class="sec-sub">Qué ganás y qué cedés al normalizar</div>
+    </div>
+  </div>
+
+  <div class="vd-grid">
+    <div class="vd-box vd-ok">
+      <div class="vd-title"><span>✓</span> Ventajas</div>
+      <div class="vd-item"><span class="vd-icon" style="color:var(--c3)">→</span><div><strong>Elimina redundancia.</strong> Cada dato se guarda en un solo lugar. El nombre de un cliente existe en una sola tabla, no en cada pedido.</div></div>
+      <div class="vd-item"><span class="vd-icon" style="color:var(--c3)">→</span><div><strong>Previene inconsistencias.</strong> Si el teléfono del cliente cambia, se actualiza en un solo lugar y todos los pedidos lo reflejan automáticamente.</div></div>
+      <div class="vd-item"><span class="vd-icon" style="color:var(--c3)">→</span><div><strong>Mejor integridad de datos.</strong> Las restricciones de FK garantizan que los datos relacionados sean coherentes en todo el sistema.</div></div>
+      <div class="vd-item"><span class="vd-icon" style="color:var(--c3)">→</span><div><strong>Ahorra espacio.</strong> Sin repeticiones, la base de datos ocupa menos espacio en disco, especialmente con millones de filas.</div></div>
+      <div class="vd-item"><span class="vd-icon" style="color:var(--c3)">→</span><div><strong>Facilita el mantenimiento.</strong> Agregar nuevas entidades o modificar estructuras existentes es más simple cuando cada tabla tiene una sola responsabilidad.</div></div>
+    </div>
+    <div class="vd-box vd-no">
+      <div class="vd-title"><span>✗</span> Desventajas</div>
+      <div class="vd-item"><span class="vd-icon" style="color:var(--cr)">→</span><div><strong>Consultas más complejas (JOINs).</strong> Para obtener información completa hay que unir varias tablas. Una consulta simple puede requerir 4 o 5 JOINs.</div></div>
+      <div class="vd-item"><span class="vd-icon" style="color:var(--cr)">→</span><div><strong>Menor velocidad de lectura.</strong> Los JOINs son operaciones costosas. En tablas con millones de filas, unir muchas tablas puede ser lento.</div></div>
+      <div class="vd-item"><span class="vd-icon" style="color:var(--cr)">→</span><div><strong>Más tablas para gestionar.</strong> Un modelo normalizado puede tener 20 o 30 tablas donde antes había 5. Más complejidad estructural.</div></div>
+      <div class="vd-item"><span class="vd-icon" style="color:var(--cr)">→</span><div><strong>Curva de aprendizaje.</strong> Entender un modelo bien normalizado requiere conocer todas las relaciones entre tablas, lo cual no es inmediato para un desarrollador nuevo.</div></div>
+    </div>
+  </div>
+
+  <div class="callout c2">
+    <div class="cmk">tradeoff</div>
+    <div class="cbody">
+      <strong>La normalización prioriza la integridad por sobre la velocidad de lectura</strong>
+      Es un intercambio consciente. En sistemas transaccionales (ventas, stock, RRHH) donde los datos cambian constantemente, la integridad es más importante. En sistemas de reportes o analytics donde solo se lee, puede convenir desnormalizar para ganar velocidad.
+    </div>
+  </div>
+</section>
+
+<!-- S5: EJEMPLOS REALES -->
+<section class="sec" id="s5">
+  <div class="sec-hd">
+    <div class="sec-num" style="background:var(--cvd);border:1px solid var(--cvb);color:var(--cv)">05</div>
+    <div>
+      <div class="sec-title">Dos ejemplos reales paso a paso</div>
+      <div class="sec-sub">Del caos a 3FN — visualizando cada transformación</div>
+    </div>
+  </div>
+
+  <div class="ex-tabs">
+    <button class="ex-tab on" id="et1" onclick="showEx(1)">Ejemplo 1 · Sistema de Pedidos</button>
+    <button class="ex-tab" id="et2" onclick="showEx(2)">Ejemplo 2 · Biblioteca</button>
+  </div>
+
+  <!-- EJEMPLO 1: PEDIDOS -->
+  <div class="ex-panel on" id="ep1">
+    <p class="prose"><strong>Sistema de Pedidos de una tienda</strong></p>
+    <p class="prose">Imaginá que alguien diseñó la base de datos de pedidos en una sola tabla gigante, como si fuera un Excel. Así empieza el problema:</p>
+
+    <!-- TABLA ORIGINAL SIN NORMALIZAR -->
+    <div class="dt-label bad" style="margin-top:16px">✕ &nbsp;Tabla original SIN normalizar — todo en un solo lugar</div>
+    <div class="dt-wrap">
+      <table class="dt">
+        <thead><tr>
+          <th>id_pedido</th><th>fecha</th>
+          <th>dni_cliente</th><th>nombre_cliente</th><th>ciudad_cliente</th>
+          <th>id_producto</th><th>nombre_producto</th><th>precio_unit</th>
+          <th>cantidad</th>
+        </tr></thead>
+        <tbody>
+          <tr class="cell-dup"><td class="cell-pk">1</td><td>01/03</td><td>20123456</td><td class="cell-err">Ana García</td><td class="cell-err">Rosario</td><td>P01</td><td class="cell-err">Teclado</td><td class="cell-err">$5.000</td><td>2</td></tr>
+          <tr class="cell-dup"><td class="cell-pk">1</td><td>01/03</td><td>20123456</td><td class="cell-err">Ana García</td><td class="cell-err">Rosario</td><td>P02</td><td class="cell-err">Mouse</td><td class="cell-err">$3.500</td><td>1</td></tr>
+          <tr><td class="cell-pk">2</td><td>02/03</td><td>30987654</td><td class="cell-err">Luis Pérez</td><td class="cell-err">Córdoba</td><td>P01</td><td class="cell-err">Teclado</td><td class="cell-err">$5.000</td><td>1</td></tr>
+          <tr><td class="cell-pk">3</td><td>02/03</td><td>20123456</td><td class="cell-err">Ana García</td><td class="cell-err">Rosario</td><td>P03</td><td class="cell-err">Monitor</td><td class="cell-err">$45.000</td><td>1</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout cr" style="margin-top:8px">
+      <div class="cmk">problemas</div>
+      <div class="cbody">
+        <strong>¿Qué está mal?</strong>
+        "Ana García" y "Rosario" se repiten 3 veces. "Teclado" y "$5.000" se repiten 2 veces. Si Ana se muda a Buenos Aires, hay que actualizar 3 filas. Si el precio del Teclado sube, hay que actualizar 2 filas. Si borrás el pedido 3, perdés los datos de Ana.
+      </div>
+    </div>
+
+    <!-- PASO 1: 1FN -->
+    <div class="step-card" style="margin-top:22px">
+      <div class="step-header" style="background:var(--c1d);border-bottom-color:var(--c1b)">
+        <span class="step-badge fn1">1FN</span>
+        <span class="step-title">Primera Forma Normal — ¿hay valores no atómicos?</span>
+      </div>
+      <div class="step-body">
+        <p class="prose">En este caso, cada celda ya tiene un solo valor. La tabla <strong>ya cumple 1FN</strong>. El problema viene en los siguientes pasos.</p>
+        <div class="callout c1"><div class="cmk">ok</div><div class="cbody"><strong>1FN cumplida.</strong> No hay celdas con listas ni columnas repetidas como <code>producto_1</code>, <code>producto_2</code>. Cada celda tiene un valor único. ✓</div></div>
+      </div>
+    </div>
+
+    <!-- PASO 2: 2FN -->
+    <div class="step-card">
+      <div class="step-header" style="background:var(--c2d);border-bottom-color:var(--c2b)">
+        <span class="step-badge fn2">2FN</span>
+        <span class="step-title">Segunda Forma Normal — eliminar dependencias parciales</span>
+      </div>
+      <div class="step-body">
+        <p class="prose">La PK compuesta es <code>(id_pedido, id_producto)</code>. Pero hay columnas que NO dependen de ambas — dependen solo de una parte:</p>
+        <ul class="ul">
+          <li><code>fecha</code>, <code>dni_cliente</code>, <code>nombre_cliente</code>, <code>ciudad_cliente</code> → solo dependen de <code>id_pedido</code></li>
+          <li><code>nombre_producto</code>, <code>precio_unit</code> → solo dependen de <code>id_producto</code></li>
+          <li><code>cantidad</code> → sí depende de ambos (cuántas unidades de ese producto en ese pedido)</li>
+        </ul>
+        <p class="prose" style="margin-top:8px">Solución: separar en 3 tablas.</p>
+        <div class="dt-label good">✓ &nbsp;Resultado después de aplicar 2FN</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+          <div>
+            <p style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--c2);margin-bottom:4px">Pedido</p>
+            <div class="dt-wrap" style="margin:0"><table class="dt">
+              <thead><tr><th>id_ped <span class="t tpk">PK</span></th><th>fecha</th><th>dni_cli <span class="t tfk">FK</span></th></tr></thead>
+              <tbody>
+                <tr><td class="cell-pk">1</td><td>01/03</td><td class="cell-fk">20123456</td></tr>
+                <tr><td class="cell-pk">2</td><td>02/03</td><td class="cell-fk">30987654</td></tr>
+                <tr><td class="cell-pk">3</td><td>02/03</td><td class="cell-fk">20123456</td></tr>
+              </tbody>
+            </table></div>
+          </div>
+          <div>
+            <p style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--c2);margin-bottom:4px">Producto</p>
+            <div class="dt-wrap" style="margin:0"><table class="dt">
+              <thead><tr><th>id_prod <span class="t tpk">PK</span></th><th>nombre</th><th>precio</th></tr></thead>
+              <tbody>
+                <tr><td class="cell-pk">P01</td><td>Teclado</td><td>$5.000</td></tr>
+                <tr><td class="cell-pk">P02</td><td>Mouse</td><td>$3.500</td></tr>
+                <tr><td class="cell-pk">P03</td><td>Monitor</td><td>$45.000</td></tr>
+              </tbody>
+            </table></div>
+          </div>
+          <div>
+            <p style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--c2);margin-bottom:4px">DetallePedido</p>
+            <div class="dt-wrap" style="margin:0"><table class="dt">
+              <thead><tr><th>id_ped <span class="t tpk">PK</span><span class="t tfk">FK</span></th><th>id_prod <span class="t tpk">PK</span><span class="t tfk">FK</span></th><th>cant.</th></tr></thead>
+              <tbody>
+                <tr><td class="cell-fk">1</td><td class="cell-fk">P01</td><td>2</td></tr>
+                <tr><td class="cell-fk">1</td><td class="cell-fk">P02</td><td>1</td></tr>
+                <tr><td class="cell-fk">2</td><td class="cell-fk">P01</td><td>1</td></tr>
+                <tr><td class="cell-fk">3</td><td class="cell-fk">P03</td><td>1</td></tr>
+              </tbody>
+            </table></div>
+          </div>
+        </div>
+        <p class="prose" style="margin-top:10px;font-size:.82rem">Notar que <code>dni_cliente</code> quedó en Pedido como FK — eso se resuelve en 3FN.</p>
+      </div>
+    </div>
+
+    <!-- PASO 3: 3FN -->
+    <div class="step-card">
+      <div class="step-header" style="background:var(--c3d);border-bottom-color:var(--c3b)">
+        <span class="step-badge fn3">3FN</span>
+        <span class="step-title">Tercera Forma Normal — eliminar dependencias transitivas</span>
+      </div>
+      <div class="step-body">
+        <p class="prose">En la tabla Pedido todavía tenemos un problema: <code>ciudad_cliente</code> no depende de <code>id_pedido</code> — depende de <code>dni_cliente</code>, que a su vez depende de <code>id_pedido</code>. Eso es una <strong>dependencia transitiva</strong>: <code>id_pedido → dni_cliente → ciudad_cliente</code>.</p>
+        <p class="prose">Solución: separar los datos del cliente en su propia tabla.</p>
+        <div class="vs">
+          <div class="vs-box vsr">
+            <div class="vsl">Antes — dependencia transitiva</div>
+            <div class="vs-body">La tabla Pedido guarda datos del cliente (<code>nombre_cliente</code>, <code>ciudad_cliente</code>) que realmente pertenecen a una entidad distinta. Esos datos se repiten en cada pedido del mismo cliente.</div>
+          </div>
+          <div class="vs-box vsg">
+            <div class="vsl">Después — 3FN cumplida</div>
+            <div class="vs-body">Los datos del cliente van en su propia tabla CLIENTE. La tabla PEDIDO solo guarda una FK al cliente. Si el cliente cambia de ciudad, se actualiza en <strong>un solo lugar</strong>.</div>
+          </div>
+        </div>
+        <div class="dt-label good" style="margin-top:14px">✓ &nbsp;Modelo final en 3FN — 4 tablas bien definidas</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px">
+          <div>
+            <p style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--c3);margin-bottom:4px">Cliente</p>
+            <div class="dt-wrap" style="margin:0"><table class="dt">
+              <thead><tr><th>dni <span class="t tpk">PK</span></th><th>nombre</th><th>ciudad</th></tr></thead>
+              <tbody>
+                <tr><td class="cell-pk">20123456</td><td>Ana García</td><td>Rosario</td></tr>
+                <tr><td class="cell-pk">30987654</td><td>Luis Pérez</td><td>Córdoba</td></tr>
+              </tbody>
+            </table></div>
+          </div>
+          <div>
+            <p style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--c3);margin-bottom:4px">Pedido</p>
+            <div class="dt-wrap" style="margin:0"><table class="dt">
+              <thead><tr><th>id_pedido <span class="t tpk">PK</span></th><th>fecha</th><th>dni_cliente <span class="t tfk">FK</span></th></tr></thead>
+              <tbody>
+                <tr><td class="cell-pk">1</td><td>01/03</td><td class="cell-fk">20123456</td></tr>
+                <tr><td class="cell-pk">2</td><td>02/03</td><td class="cell-fk">30987654</td></tr>
+                <tr><td class="cell-pk">3</td><td>02/03</td><td class="cell-fk">20123456</td></tr>
+              </tbody>
+            </table></div>
+          </div>
+        </div>
+        <div class="callout c3" style="margin-top:14px">
+          <div class="cmk">logrado</div>
+          <div class="cbody"><strong>3FN alcanzada.</strong> Cada tabla tiene una única responsabilidad. Los datos no se repiten. Actualizar la ciudad de Ana requiere cambiar <strong>una sola fila</strong> en la tabla Cliente — el cambio se refleja automáticamente en todos sus pedidos.</div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /ep1 -->
+
+  <!-- EJEMPLO 2: BIBLIOTECA -->
+  <div class="ex-panel" id="ep2">
+    <p class="prose"><strong>Sistema de Préstamos de una Biblioteca</strong></p>
+    <p class="prose">Una biblioteca registra todos sus préstamos en una sola planilla. Cada fila es un préstamo, y tiene información del libro, del autor, de la editorial y del socio:</p>
+
+    <!-- TABLA ORIGINAL SIN NORMALIZAR -->
+    <div class="dt-label bad" style="margin-top:16px">✕ &nbsp;Tabla original SIN normalizar</div>
+    <div class="dt-wrap">
+      <table class="dt">
+        <thead><tr>
+          <th>id_prestamo</th><th>isbn_libro</th><th>titulo</th><th>autor</th>
+          <th>editorial</th><th>ciudad_editorial</th>
+          <th>dni_socio</th><th>nombre_socio</th><th>tel_socio</th>
+          <th>f_prestamo</th><th>f_devolucion</th>
+        </tr></thead>
+        <tbody>
+          <tr class="cell-dup"><td class="cell-pk">1</td><td>978-001</td><td class="cell-err">Rayuela</td><td class="cell-err">Cortázar</td><td class="cell-err">Sudamericana</td><td class="cell-err">Buenos Aires</td><td>20111222</td><td class="cell-err">María López</td><td class="cell-err">11-1234</td><td>01/03</td><td>15/03</td></tr>
+          <tr class="cell-dup"><td class="cell-pk">2</td><td>978-001</td><td class="cell-err">Rayuela</td><td class="cell-err">Cortázar</td><td class="cell-err">Sudamericana</td><td class="cell-err">Buenos Aires</td><td>30222333</td><td class="cell-err">Pedro Ruiz</td><td class="cell-err">341-999</td><td>05/03</td><td>20/03</td></tr>
+          <tr><td class="cell-pk">3</td><td>978-002</td><td class="cell-err">El Aleph</td><td class="cell-err">Borges</td><td class="cell-err">Emecé</td><td class="cell-err">Buenos Aires</td><td>20111222</td><td class="cell-err">María López</td><td class="cell-err">11-1234</td><td>10/03</td><td>25/03</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout cr" style="margin-top:8px">
+      <div class="cmk">problemas</div>
+      <div class="cbody">
+        <strong>¿Qué está mal?</strong>
+        "Rayuela", "Cortázar", "Sudamericana" se repiten en los préstamos 1 y 2. "María López" y su teléfono se repiten en los préstamos 1 y 3. Si Sudamericana cambia de ciudad, hay que actualizar todas las filas que la tienen. Si el teléfono de María cambia, hay que actualizarlo en múltiples filas.
+      </div>
+    </div>
+
+    <!-- PASO 1FN -->
+    <div class="step-card" style="margin-top:22px">
+      <div class="step-header" style="background:var(--c1d);border-bottom-color:var(--c1b)">
+        <span class="step-badge fn1">1FN</span>
+        <span class="step-title">Primera Forma Normal — verificación</span>
+      </div>
+      <div class="step-body">
+        <p class="prose">Cada celda tiene un solo valor. No hay columnas repetidas tipo <code>autor_1</code>, <code>autor_2</code>. La tabla <strong>ya cumple 1FN</strong>.</p>
+        <div class="callout c1"><div class="cmk">ok</div><div class="cbody"><strong>1FN cumplida.</strong> Cada préstamo ocupa una sola fila con un valor por celda. ✓</div></div>
+      </div>
+    </div>
+
+    <!-- PASO 2FN -->
+    <div class="step-card">
+      <div class="step-header" style="background:var(--c2d);border-bottom-color:var(--c2b)">
+        <span class="step-badge fn2">2FN</span>
+        <span class="step-title">Segunda Forma Normal — dependencias parciales</span>
+      </div>
+      <div class="step-body">
+        <p class="prose">La PK es simple (<code>id_prestamo</code>), entonces técnicamente no hay PK compuesta y la 2FN se cumple automáticamente — pero hay dependencias de entidades distintas mezcladas. Separamos las entidades claras:</p>
+        <ul class="ul">
+          <li><code>titulo</code>, <code>autor</code>, <code>editorial</code> → dependen de <code>isbn_libro</code>, no del préstamo</li>
+          <li><code>nombre_socio</code>, <code>tel_socio</code> → dependen de <code>dni_socio</code>, no del préstamo</li>
+          <li><code>f_prestamo</code>, <code>f_devolucion</code>, <code>isbn_libro</code>, <code>dni_socio</code> → sí dependen del préstamo</li>
+        </ul>
+        <div class="dt-label good" style="margin-top:10px">✓ &nbsp;Separamos las entidades identificadas</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:4px">
+          <div>
+            <p style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--c2);margin-bottom:4px">Libro</p>
+            <div class="dt-wrap" style="margin:0"><table class="dt">
+              <thead><tr><th>isbn <span class="t tpk">PK</span></th><th>titulo</th><th>autor</th><th>editorial</th></tr></thead>
+              <tbody>
+                <tr><td class="cell-pk">978-001</td><td>Rayuela</td><td>Cortázar</td><td>Sudamericana</td></tr>
+                <tr><td class="cell-pk">978-002</td><td>El Aleph</td><td>Borges</td><td>Emecé</td></tr>
+              </tbody>
+            </table></div>
+          </div>
+          <div>
+            <p style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--c2);margin-bottom:4px">Socio</p>
+            <div class="dt-wrap" style="margin:0"><table class="dt">
+              <thead><tr><th>dni <span class="t tpk">PK</span></th><th>nombre</th><th>telefono</th></tr></thead>
+              <tbody>
+                <tr><td class="cell-pk">20111222</td><td>María López</td><td>11-1234</td></tr>
+                <tr><td class="cell-pk">30222333</td><td>Pedro Ruiz</td><td>341-999</td></tr>
+              </tbody>
+            </table></div>
+          </div>
+          <div>
+            <p style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--c2);margin-bottom:4px">Prestamo</p>
+            <div class="dt-wrap" style="margin:0"><table class="dt">
+              <thead><tr><th>id <span class="t tpk">PK</span></th><th>isbn <span class="t tfk">FK</span></th><th>dni <span class="t tfk">FK</span></th><th>f_prest.</th><th>f_dev.</th></tr></thead>
+              <tbody>
+                <tr><td class="cell-pk">1</td><td class="cell-fk">978-001</td><td class="cell-fk">20111222</td><td>01/03</td><td>15/03</td></tr>
+                <tr><td class="cell-pk">2</td><td class="cell-fk">978-001</td><td class="cell-fk">30222333</td><td>05/03</td><td>20/03</td></tr>
+                <tr><td class="cell-pk">3</td><td class="cell-fk">978-002</td><td class="cell-fk">20111222</td><td>10/03</td><td>25/03</td></tr>
+              </tbody>
+            </table></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PASO 3FN -->
+    <div class="step-card">
+      <div class="step-header" style="background:var(--c3d);border-bottom-color:var(--c3b)">
+        <span class="step-badge fn3">3FN</span>
+        <span class="step-title">Tercera Forma Normal — dependencia transitiva en Libro</span>
+      </div>
+      <div class="step-body">
+        <p class="prose">En la tabla Libro hay una dependencia transitiva: <code>isbn → editorial → ciudad_editorial</code>. La ciudad de la editorial no depende del ISBN del libro — depende de la editorial. Si Sudamericana abre una sucursal en Rosario, habría que actualizar todos sus libros.</p>
+        <p class="prose">Solución: separar la editorial en su propia tabla.</p>
+        <div class="dt-label good" style="margin-top:10px">✓ &nbsp;Modelo final en 3FN — 4 tablas</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px">
+          <div>
+            <p style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--c3);margin-bottom:4px">Editorial</p>
+            <div class="dt-wrap" style="margin:0"><table class="dt">
+              <thead><tr><th>id_ed <span class="t tpk">PK</span></th><th>nombre</th><th>ciudad</th></tr></thead>
+              <tbody>
+                <tr><td class="cell-pk">1</td><td>Sudamericana</td><td>Buenos Aires</td></tr>
+                <tr><td class="cell-pk">2</td><td>Emecé</td><td>Buenos Aires</td></tr>
+              </tbody>
+            </table></div>
+          </div>
+          <div>
+            <p style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--c3);margin-bottom:4px">Libro</p>
+            <div class="dt-wrap" style="margin:0"><table class="dt">
+              <thead><tr><th>isbn <span class="t tpk">PK</span></th><th>titulo</th><th>autor</th><th>id_ed <span class="t tfk">FK</span></th></tr></thead>
+              <tbody>
+                <tr><td class="cell-pk">978-001</td><td>Rayuela</td><td>Cortázar</td><td class="cell-fk">1</td></tr>
+                <tr><td class="cell-pk">978-002</td><td>El Aleph</td><td>Borges</td><td class="cell-fk">2</td></tr>
+              </tbody>
+            </table></div>
+          </div>
+        </div>
+        <div class="callout c3" style="margin-top:14px">
+          <div class="cmk">logrado</div>
+          <div class="cbody"><strong>3FN alcanzada.</strong> Editorial, Libro, Socio y Prestamo son 4 tablas independientes. Cada una tiene un solo concepto del mundo real. No hay datos repetidos. Si Sudamericana cambia de ciudad, se actualiza en <strong>una sola fila</strong> de la tabla Editorial.</div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /ep2 -->
+
+</section>
+
+<!-- S6: DBML -->
+<section class="sec" id="s6">
+  <div class="sec-hd">
+    <div class="sec-num" style="background:var(--ctd);border:1px solid var(--ctb);color:var(--ct)">06</div>
+    <div>
+      <div class="sec-title">Modelos en DBML</div>
+      <div class="sec-sub">Los dos modelos finales normalizados, listos para pegar en dbdiagram.io</div>
+    </div>
+  </div>
+
+  <p class="prose">Copiá cualquiera de los dos bloques y pegalo en <strong>dbdiagram.io</strong> para visualizar el modelo normalizado completo.</p>
+
+  <p class="prose" style="margin-bottom:6px"><strong>Ejemplo 1 — Sistema de Pedidos (3FN):</strong></p>
+  <div class="dbml-wrap">
+    <div class="dbml-block" id="d1"><pre>
+<span class="kw">Table</span> <span class="tb">Cliente</span> {
+  dni      <span class="tp">varchar(10)</span>   [<span class="pk">pk</span>]
+  nombre   <span class="tp">varchar(100)</span>
+  apellido <span class="tp">varchar(100)</span>
+  ciudad   <span class="tp">varchar(80)</span>
+  telefono <span class="tp">varchar(20)</span>
+}
+
+<span class="kw">Table</span> <span class="tb">Producto</span> {
+  id_producto  <span class="tp">varchar(10)</span>   [<span class="pk">pk</span>]
+  nombre       <span class="tp">varchar(150)</span>
+  precio_unit  <span class="tp">float</span>
+  stock        <span class="tp">int</span>
+}
+
+<span class="kw">Table</span> <span class="tb">Pedido</span> {
+  id_pedido    <span class="tp">int</span>          [<span class="pk">pk</span>, increment]
+  fecha        <span class="tp">date</span>
+  dni_cliente  <span class="tp">varchar(10)</span>  [<span class="rf">ref: > Cliente.dni</span>]
+  <span class="cm">// Un cliente puede tener muchos pedidos (1:N)</span>
+}
+
+<span class="kw">Table</span> <span class="tb">DetallePedido</span> {
+  id_pedido   <span class="tp">int</span>          [<span class="rf">ref: > Pedido.id_pedido</span>]
+  id_producto <span class="tp">varchar(10)</span>  [<span class="rf">ref: > Producto.id_producto</span>]
+  cantidad    <span class="tp">int</span>
+  precio_al_momento <span class="tp">float</span>  <span class="cm">// snapshot del precio — puede cambiar</span>
+
+  indexes {
+    (id_pedido, id_producto) [<span class="pk">pk</span>]  <span class="cm">// PK compuesta</span>
+  }
+}
+</pre></div>
+    <button class="copy-btn" onclick="doCopy('d1',this)">Copiar</button>
+  </div>
+
+  <p class="prose" style="margin-top:22px;margin-bottom:6px"><strong>Ejemplo 2 — Biblioteca (3FN):</strong></p>
+  <div class="dbml-wrap">
+    <div class="dbml-block" id="d2"><pre>
+<span class="kw">Table</span> <span class="tb">Editorial</span> {
+  id_editorial  <span class="tp">int</span>          [<span class="pk">pk</span>, increment]
+  nombre        <span class="tp">varchar(100)</span>
+  ciudad        <span class="tp">varchar(80)</span>
+  pais          <span class="tp">varchar(60)</span>
+}
+
+<span class="kw">Table</span> <span class="tb">Libro</span> {
+  isbn          <span class="tp">varchar(20)</span>  [<span class="pk">pk</span>]
+  titulo        <span class="tp">varchar(200)</span>
+  autor         <span class="tp">varchar(150)</span>
+  anio_pub      <span class="tp">int</span>
+  id_editorial  <span class="tp">int</span>          [<span class="rf">ref: > Editorial.id_editorial</span>]
+  <span class="cm">// Dependencia transitiva eliminada: ciudad_editorial ahora esta en Editorial</span>
+}
+
+<span class="kw">Table</span> <span class="tb">Socio</span> {
+  dni      <span class="tp">varchar(10)</span>   [<span class="pk">pk</span>]
+  nombre   <span class="tp">varchar(100)</span>
+  apellido <span class="tp">varchar(100)</span>
+  telefono <span class="tp">varchar(20)</span>
+  email    <span class="tp">varchar(120)</span>
+}
+
+<span class="kw">Table</span> <span class="tb">Prestamo</span> {
+  id_prestamo    <span class="tp">int</span>          [<span class="pk">pk</span>, increment]
+  isbn_libro     <span class="tp">varchar(20)</span>  [<span class="rf">ref: > Libro.isbn</span>]
+  dni_socio      <span class="tp">varchar(10)</span>  [<span class="rf">ref: > Socio.dni</span>]
+  fecha_prestamo <span class="tp">date</span>
+  fecha_devol    <span class="tp">date</span>
+  estado         <span class="tp">varchar(20)</span>  <span class="cm">// 'activo', 'devuelto', 'vencido'</span>
+}
+</pre></div>
+    <button class="copy-btn" onclick="doCopy('d2',this)">Copiar</button>
+  </div>
+
+  <div class="callout ct">
+    <div class="cmk">consejo</div>
+    <div class="cbody">
+      <strong>Cómo reconocer que llegaste a 3FN</strong>
+      Hacete estas tres preguntas para cada tabla:
+      ¿Cada columna tiene un solo valor por fila? (1FN)
+      ¿Cada columna no-clave depende de la PK completa? (2FN)
+      ¿Ninguna columna no-clave depende de otra columna no-clave? (3FN)
+      Si las tres respuestas son "sí", la tabla está en 3FN.
+    </div>
+  </div>
+</section>
+
+</div><!-- /wrap -->
+<div class="twrap" id="tw"></div>
+
+<script>
+/* TEMA */
+function toggleTheme(){
+  const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';
+  h.setAttribute('data-theme',d?'light':'dark');
+  document.getElementById('tlbl').textContent=d?'claro':'oscuro';
+}
+
+/* PROGRESS */
+window.addEventListener('scroll',()=>{
+  document.getElementById('prog').style.width=(window.scrollY/(document.body.scrollHeight-window.innerHeight)*100)+'%';
+});
+
+/* NAV ACTIVO */
+const allS=document.querySelectorAll('section.sec');
+const allL=document.querySelectorAll('a.nl');
+(()=>{
+  const obs=new IntersectionObserver(en=>{
+    en.forEach(e=>{if(e.isIntersecting){const id='#'+e.target.id;allL.forEach(l=>l.classList.toggle('on',l.getAttribute('href')===id));}});
+  },{rootMargin:'-25% 0px -65% 0px'});
+  allS.forEach(s=>obs.observe(s));
+})();
+
+/* TABS */
+function showEx(n){[1,2].forEach(i=>{document.getElementById('ep'+i).classList.toggle('on',i===n);document.getElementById('et'+i).classList.toggle('on',i===n);});}
+
+/* COPY */
+function doCopy(id,btn){
+  navigator.clipboard.writeText(document.getElementById(id).innerText).then(()=>{
+    btn.textContent='¡Copiado!';btn.classList.add('done');
+    setTimeout(()=>{btn.textContent='Copiar';btn.classList.remove('done');},2200);
+  });
+}
+</script>
+</body>
+</html>

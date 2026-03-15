@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Desnormalización · DB·Didáctico</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Lato:ital,wght@0,300;0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ══ THEMES */
+[data-theme="dark"]{
+  --bg:#09090e;--surf:#0e1017;--surf2:#14161f;--surf3:#191c28;
+  --brd:#1a1e30;--text:#dde0ee;--muted:#42485e;--muted2:#68728e;
+  --nav:#0c0e16;--inp:#0e1017;--thead:#14161f;
+  --rb:rgba(255,255,255,.025);--codebg:#060609;--sh:rgba(0,0,0,.65);
+}
+[data-theme="light"]{
+  --bg:#eaecf6;--surf:#fff;--surf2:#e2e5f2;--surf3:#d5d9ee;
+  --brd:#cad0e8;--text:#12152a;--muted:#878fa8;--muted2:#505878;
+  --nav:#fff;--inp:#fff;--thead:#e2e5f2;
+  --rb:rgba(0,0,0,.04);--codebg:#09090e;--sh:rgba(0,0,0,.1);
+}
+:root{
+  --burn:#c95020;  --burnd:rgba(201,80,32,.09);  --burnb:rgba(201,80,32,.28);
+  --gold:#c48a00;  --goldd:rgba(196,138,0,.09);  --goldb:rgba(196,138,0,.3);
+  --slate:#4878d4; --slated:rgba(72,120,212,.09);--slateb:rgba(72,120,212,.27);
+  --sage:#3aad6e;  --saged:rgba(58,173,110,.09); --sageb:rgba(58,173,110,.27);
+  --ember:#d94060; --emberd:rgba(217,64,96,.09); --emberb:rgba(217,64,96,.28);
+  --ink:#9060e0;   --inkd:rgba(144,96,224,.09);  --inkb:rgba(144,96,224,.28);
+  --copper:#b06030;--copperd:rgba(176,96,48,.09);--copperb:rgba(176,96,48,.28);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Lato',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;transition:background .22s,color .22s;padding-bottom:80px;}
+#prog{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--burn),var(--gold),var(--sage));z-index:500;transition:width .1s linear;pointer-events:none;}
+
+/* NAVBAR */
+.nb{height:40px;background:var(--nav);border-bottom:1px solid var(--brd);display:flex;align-items:center;padding:0 16px;gap:2px;position:sticky;top:0;z-index:200;overflow-x:auto;scrollbar-width:none;transition:background .22s;}
+.nb::-webkit-scrollbar{display:none;}
+.nb-brand{font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:600;color:var(--burn);display:flex;align-items:center;gap:6px;margin-right:6px;white-space:nowrap;flex-shrink:0;text-decoration:none;}
+.nb-dot{width:6px;height:6px;border-radius:50%;background:var(--burn);}
+.nb-sep{width:1px;height:16px;background:var(--brd);margin:0 5px;flex-shrink:0;}
+.nl{font-family:'JetBrains Mono',monospace;font-size:.63rem;color:var(--muted);background:transparent;border:none;padding:3px 7px;border-radius:4px;cursor:pointer;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:color .14s,background .14s;}
+.nl:hover{color:var(--text);background:var(--surf2);}
+.nl.on{color:var(--burn);background:var(--burnd);}
+.nsp{flex:1;min-width:8px;}
+.tt{display:flex;align-items:center;gap:5px;cursor:pointer;user-select:none;flex-shrink:0;}
+.tl{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--muted);}
+.tk{width:32px;height:17px;background:var(--surf2);border:1px solid var(--brd);border-radius:20px;position:relative;transition:background .2s,border-color .2s;}
+[data-theme="dark"] .tk{background:rgba(201,80,32,.18);border-color:rgba(201,80,32,.35);}
+.th2{position:absolute;top:2px;left:2px;width:11px;height:11px;border-radius:50%;background:var(--muted);transition:left .2s,background .2s;}
+[data-theme="dark"] .th2{left:17px;background:var(--burn);}
+
+/* HERO */
+.hero{padding:54px 24px 44px;text-align:center;border-bottom:1px solid var(--brd);position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 55% 65% at 25% 50%,rgba(201,80,32,.07) 0%,transparent 60%),
+  radial-gradient(ellipse 55% 65% at 75% 50%,rgba(196,138,0,.06) 0%,transparent 60%),
+  radial-gradient(ellipse 40% 50% at 50% -5%,rgba(201,80,32,.05) 0%,transparent 55%);}
+.eyebrow{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted2);background:var(--surf2);border:1px solid var(--brd);padding:4px 14px;border-radius:20px;margin-bottom:18px;}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(1.9rem,5.5vw,3.3rem);font-weight:800;line-height:1.06;margin-bottom:13px;}
+.hero h1 .hi{color:var(--burn);}
+.hero-sub{color:var(--muted2);font-size:.93rem;max-width:540px;margin:0 auto 28px;line-height:1.65;}
+.chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;}
+.chip{font-family:'JetBrains Mono',monospace;font-size:.67rem;padding:4px 12px;border-radius:20px;text-decoration:none;transition:transform .15s,box-shadow .15s;display:inline-block;}
+.chip:hover{transform:translateY(-2px);box-shadow:0 4px 16px var(--sh);}
+
+/* LAYOUT */
+.wrap{max-width:980px;margin:0 auto;padding:0 24px;}
+.sec{padding-top:64px;padding-bottom:48px;border-bottom:1px solid var(--brd);}
+.sec:last-child{border-bottom:none;}
+.sec-hd{display:flex;align-items:flex-start;gap:16px;margin-bottom:30px;}
+.sec-num{font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:600;padding:4px 9px;border-radius:6px;flex-shrink:0;margin-top:5px;letter-spacing:.6px;text-transform:uppercase;}
+.sec-title{font-family:'Syne',sans-serif;font-size:clamp(1.3rem,3.5vw,1.95rem);font-weight:800;line-height:1.1;}
+.sec-sub{font-family:'JetBrains Mono',monospace;font-size:.71rem;color:var(--muted2);margin-top:6px;}
+
+/* PROSE */
+.prose{font-size:.91rem;color:var(--muted2);margin-bottom:14px;line-height:1.8;}
+.prose strong{color:var(--text);font-weight:700;}
+.prose code{font-family:'JetBrains Mono',monospace;background:var(--surf2);border:1px solid var(--brd);padding:1px 6px;border-radius:4px;font-size:.82em;}
+.hdiv{height:1px;background:var(--brd);margin:22px 0;}
+
+/* CALLOUTS */
+.callout{border-radius:10px;padding:14px 18px;margin:16px 0;display:flex;gap:12px;align-items:flex-start;font-size:.86rem;line-height:1.68;}
+.cmk{font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:600;flex-shrink:0;margin-top:1px;padding:2px 7px;border-radius:4px;letter-spacing:.3px;}
+.cbody{color:var(--muted2);}
+.cbody strong{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;display:block;margin-bottom:4px;}
+.cb{background:var(--burnd);border:1px solid var(--burnb);}    .cb .cmk{background:var(--burnd);color:var(--burn);border:1px solid var(--burnb);}    .cb .cbody strong{color:var(--burn);}
+.cg{background:var(--goldd);border:1px solid var(--goldb);}    .cg .cmk{background:var(--goldd);color:var(--gold);border:1px solid var(--goldb);}    .cg .cbody strong{color:var(--gold);}
+.cs{background:var(--slated);border:1px solid var(--slateb);}  .cs .cmk{background:var(--slated);color:var(--slate);border:1px solid var(--slateb);} .cs .cbody strong{color:var(--slate);}
+.cv{background:var(--saged);border:1px solid var(--sageb);}    .cv .cmk{background:var(--saged);color:var(--sage);border:1px solid var(--sageb);}   .cv .cbody strong{color:var(--sage);}
+.ce{background:var(--emberd);border:1px solid var(--emberb);}  .ce .cmk{background:var(--emberd);color:var(--ember);border:1px solid var(--emberb);}  .ce .cbody strong{color:var(--ember);}
+.ci{background:var(--inkd);border:1px solid var(--inkb);}      .ci .cmk{background:var(--inkd);color:var(--ink);border:1px solid var(--inkb);}       .ci .cbody strong{color:var(--ink);}
+.cc{background:var(--copperd);border:1px solid var(--copperb);}.cc .cmk{background:var(--copperd);color:var(--copper);border:1px solid var(--copperb);}.cc .cbody strong{color:var(--copper);}
+
+/* CARDS */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:18px 0;}
+.card{background:var(--surf);border:1px solid var(--brd);border-radius:10px;padding:17px 18px;transition:border-color .18s,transform .15s,box-shadow .15s;}
+.card:hover{transform:translateY(-2px);box-shadow:0 6px 22px var(--sh);}
+.ctag{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+.chead{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--text);margin-bottom:7px;}
+.cbod{font-size:.82rem;color:var(--muted2);line-height:1.6;}
+.cbod strong{color:var(--text);}
+
+/* UL */
+.ul{list-style:none;margin:10px 0 16px;display:flex;flex-direction:column;gap:8px;}
+.ul li{font-size:.87rem;color:var(--muted2);line-height:1.65;display:flex;gap:10px;align-items:flex-start;}
+.ul li::before{content:'→';color:var(--burn);font-family:'JetBrains Mono',monospace;font-size:.72rem;flex-shrink:0;margin-top:4px;}
+.ul li strong{color:var(--text);}
+
+/* INLINE TAGS */
+.t{display:inline-block;font-size:8px;padding:1px 5px;border-radius:3px;margin-left:3px;font-family:'JetBrains Mono',monospace;vertical-align:middle;line-height:1.5;}
+.tpk{background:rgba(58,173,110,.16);color:var(--sage);}
+.tfk{background:rgba(72,120,212,.14);color:var(--slate);}
+.tdup{background:rgba(217,64,96,.14);color:var(--ember);}
+.tsnap{background:rgba(196,138,0,.14);color:var(--gold);}
+.tfast{background:rgba(58,173,110,.14);color:var(--sage);}
+
+/* DATA TABLES */
+.dt-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--brd);margin:12px 0;}
+table.dt{width:100%;border-collapse:collapse;font-size:.8rem;}
+table.dt thead tr{background:var(--thead);}
+table.dt thead th{padding:8px 12px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:.64rem;letter-spacing:.4px;color:var(--muted);border-bottom:1px solid var(--brd);white-space:nowrap;font-weight:500;}
+table.dt tbody tr{border-bottom:1px solid var(--rb);}
+table.dt tbody tr:last-child{border-bottom:none;}
+table.dt tbody td{padding:7px 12px;color:var(--muted2);white-space:nowrap;font-size:.79rem;}
+.cpk{color:var(--sage);font-family:'JetBrains Mono',monospace;font-weight:600;}
+.cfk{color:var(--slate);font-family:'JetBrains Mono',monospace;}
+.cdup{color:var(--ember);font-family:'JetBrains Mono',monospace;}
+.csnap{color:var(--gold);font-family:'JetBrains Mono',monospace;font-weight:600;}
+.chigh{background:rgba(196,138,0,.06);}
+.dt-lbl{font-family:'JetBrains Mono',monospace;font-size:.67rem;letter-spacing:1px;text-transform:uppercase;margin:14px 0 4px;display:flex;align-items:center;gap:7px;}
+.dt-lbl.bad{color:var(--ember);}
+.dt-lbl.good{color:var(--sage);}
+.dt-lbl.info{color:var(--slate);}
+
+/* COMPARISON BOXES */
+.comp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;}
+@media(max-width:600px){.comp{grid-template-columns:1fr;}}
+.comp-box{border-radius:10px;padding:16px 18px;border:1px solid;}
+.cnorm{background:var(--slated);border-color:var(--slateb);}
+.cdenorm{background:var(--goldd);border-color:var(--goldb);}
+.comp-lbl{font-family:'Syne',sans-serif;font-size:.82rem;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:7px;}
+.cnorm .comp-lbl{color:var(--slate);}
+.cdenorm .comp-lbl{color:var(--gold);}
+.comp-body{font-size:.82rem;color:var(--muted2);line-height:1.6;}
+.comp-body strong{color:var(--text);}
+.comp-body code{font-family:'JetBrains Mono',monospace;font-size:.8em;background:var(--surf2);padding:1px 5px;border-radius:3px;border:1px solid var(--brd);}
+
+/* VENTAJAS / DESVENTAJAS */
+.vd-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+@media(max-width:600px){.vd-grid{grid-template-columns:1fr;}}
+.vd-box{border-radius:10px;padding:18px;border:1px solid;}
+.vd-ok{background:var(--saged);border-color:var(--sageb);}
+.vd-no{background:var(--emberd);border-color:var(--emberb);}
+.vd-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.vd-ok .vd-title{color:var(--sage);}
+.vd-no .vd-title{color:var(--ember);}
+.vd-item{font-size:.83rem;color:var(--muted2);line-height:1.6;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04);display:flex;gap:9px;align-items:flex-start;}
+[data-theme="light"] .vd-item{border-bottom-color:rgba(0,0,0,.05);}
+.vd-item:last-child{border-bottom:none;}
+.vd-icon{font-size:.75rem;flex-shrink:0;margin-top:2px;}
+.vd-item strong{color:var(--text);}
+
+/* TÉCNICAS */
+.tech-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:18px 0;}
+.tech-card{background:var(--surf);border:1px solid var(--brd);border-radius:10px;padding:16px 18px;transition:border-color .18s,transform .15s;}
+.tech-card:hover{transform:translateY(-2px);}
+.tech-num{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.tech-name{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:800;color:var(--text);margin-bottom:7px;}
+.tech-body{font-size:.8rem;color:var(--muted2);line-height:1.55;}
+.tech-body code{font-family:'JetBrains Mono',monospace;font-size:.78em;background:var(--surf2);padding:1px 5px;border-radius:3px;border:1px solid var(--brd);}
+
+/* STEP CARDS */
+.step-card{background:var(--surf);border:1px solid var(--brd);border-radius:10px;margin:18px 0;overflow:hidden;}
+.step-hdr{padding:12px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--brd);}
+.step-badge{font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:600;padding:3px 10px;border-radius:5px;flex-shrink:0;}
+.step-title{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;color:var(--text);}
+.step-body{padding:18px 18px 16px;}
+
+/* TABS */
+.ex-tabs{display:flex;border-bottom:1px solid var(--brd);background:var(--surf);border-radius:10px 10px 0 0;overflow:hidden;}
+.ex-tab{flex:1;padding:11px 10px;background:transparent;border:none;font-family:'Syne',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;transition:all .18s;}
+.ex-tab:hover{color:var(--muted2);background:var(--surf2);}
+.ex-tab.on{color:var(--burn);border-bottom-color:var(--burn);background:var(--burnd);}
+.ex-panel{display:none;border:1px solid var(--brd);border-top:none;border-radius:0 0 10px 10px;background:var(--surf);padding:26px;}
+.ex-panel.on{display:block;}
+
+/* SQL BLOCK */
+.sql-block{background:var(--codebg);border:1px solid var(--brd);border-radius:8px;padding:14px 16px;margin:12px 0;overflow-x:auto;}
+.sql-block pre{font-family:'JetBrains Mono',monospace;font-size:.77rem;line-height:1.7;color:#8baac8;white-space:pre;}
+.ks{color:#c792ea;} .ts{color:#ffcb6b;} .ns{color:#82aaff;} .vs{color:#f9d849;} .cs{color:#3d5060;font-style:italic;}
+
+/* DBML */
+.dbml-wrap{position:relative;margin:16px 0;}
+.dbml-block{background:var(--codebg);border:1px solid var(--brd);border-radius:10px;padding:20px 20px 18px;overflow-x:auto;}
+.dbml-block pre{font-family:'JetBrains Mono',monospace;font-size:.79rem;line-height:1.75;color:#8baac8;white-space:pre;}
+.kw{color:#c792ea;} .tb{color:#ffcb6b;} .tp{color:#82aaff;} .pk{color:#3aad6e;} .rf{color:#89ddff;} .cm{color:#3a4e60;font-style:italic;} .un{color:#c48a00;}
+.copy-btn{position:absolute;top:10px;right:10px;background:var(--surf2);border:1px solid var(--brd);color:var(--muted2);font-family:'JetBrains Mono',monospace;font-size:.65rem;padding:4px 10px;border-radius:5px;cursor:pointer;transition:all .14s;z-index:1;}
+.copy-btn:hover{color:var(--text);border-color:var(--burn);background:var(--burnd);}
+.copy-btn.done{color:var(--sage);border-color:var(--sageb);}
+
+/* CUÁNDO USAR - CHECKLIST */
+.when-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0;}
+@media(max-width:600px){.when-grid{grid-template-columns:1fr;}}
+.when-yes{background:var(--saged);border:1px solid var(--sageb);border-radius:10px;padding:16px;}
+.when-no{background:var(--emberd);border:1px solid var(--emberb);border-radius:10px;padding:16px;}
+.when-title{font-family:'Syne',sans-serif;font-size:.88rem;font-weight:800;margin-bottom:10px;}
+.when-yes .when-title{color:var(--sage);}
+.when-no .when-title{color:var(--ember);}
+.when-item{font-size:.82rem;color:var(--muted2);line-height:1.6;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);display:flex;gap:8px;}
+[data-theme="light"] .when-item{border-bottom-color:rgba(0,0,0,.05);}
+.when-item:last-child{border-bottom:none;}
+.when-item strong{color:var(--text);}
+
+/* FLOW ARROW */
+.flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0;padding:12px 16px;background:var(--surf2);border-radius:8px;border:1px solid var(--brd);}
+.flow-node{font-family:'JetBrains Mono',monospace;font-size:.74rem;padding:4px 10px;border-radius:5px;border:1px solid var(--brd);background:var(--surf);white-space:nowrap;}
+.flow-arr{color:var(--muted);font-size:.8rem;}
+.flow-node.highlight{border-color:var(--goldb);background:var(--goldd);color:var(--gold);}
+
+@media(max-width:640px){.wrap{padding:0 14px;}.hero{padding:40px 14px 34px;}.grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div id="prog" style="width:0"></div>
+
+<!-- NAVBAR -->
+<nav class="nb">
+  <a class="nb-brand" href="#top"><div class="nb-dot"></div>DB·Didáctico</a>
+  <div class="nb-sep"></div>
+  <a class="nl on" href="#s1">1. ¿Qué es?</a>
+  <a class="nl" href="#s2">2. ¿Cuándo se usa?</a>
+  <a class="nl" href="#s3">3. Técnicas</a>
+  <a class="nl" href="#s4">4. Ventajas y Desventajas</a>
+  <a class="nl" href="#s5">5. Ejemplos reales</a>
+  <a class="nl" href="#s6">6. DBML</a>
+  <div class="nsp"></div>
+  <div class="tt" onclick="toggleTheme()">
+    <span class="tl">claro</span>
+    <div class="tk"><div class="th2"></div></div>
+    <span class="tl" id="tlbl">oscuro</span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="eyebrow">TUP · UTN 2026 · Diseño avanzado de BD</div>
+  <h1><span class="hi">Des</span>normalización</h1>
+  <p class="hero-sub">El arte de romper las reglas de normalización <em>a propósito</em>, con un objetivo claro: velocidad de lectura o integridad histórica. No es el punto de partida — es una herramienta de expertos.</p>
+  <div class="chips">
+    <a href="#s1" class="chip" style="background:var(--burnd);border:1px solid var(--burnb);color:var(--burn)">¿Qué es?</a>
+    <a href="#s2" class="chip" style="background:var(--goldd);border:1px solid var(--goldb);color:var(--gold)">¿Cuándo se usa?</a>
+    <a href="#s3" class="chip" style="background:var(--slated);border:1px solid var(--slateb);color:var(--slate)">Técnicas</a>
+    <a href="#s4" class="chip" style="background:var(--saged);border:1px solid var(--sageb);color:var(--sage)">Ventajas y Desventajas</a>
+    <a href="#s5" class="chip" style="background:var(--inkd);border:1px solid var(--inkb);color:var(--ink)">Ejemplos reales</a>
+    <a href="#s6" class="chip" style="background:var(--copperd);border:1px solid var(--copperb);color:var(--copper)">DBML</a>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- S1: ¿QUÉ ES? -->
+<section class="sec" id="s1">
+  <div class="sec-hd">
+    <div class="sec-num" style="background:var(--burnd);border:1px solid var(--burnb);color:var(--burn)">01</div>
+    <div>
+      <div class="sec-title">¿Qué es la Desnormalización?</div>
+      <div class="sec-sub">El proceso inverso — y por qué tiene sentido hacerlo</div>
+    </div>
+  </div>
+
+  <p class="prose">La <strong>desnormalización</strong> es el proceso de <em>introducir redundancia controlada</em> en un modelo de base de datos que ya fue normalizado, con el objetivo de mejorar el rendimiento de las consultas de lectura o preservar datos históricos.</p>
+
+  <div class="callout cb">
+    <div class="cmk">def</div>
+    <div class="cbody">
+      <strong>Definición</strong>
+      Desnormalizar es tomar un modelo en 3FN (o superior) y, de manera deliberada y documentada, combinar tablas, agregar columnas redundantes o guardar datos calculados — aceptando la redundancia a cambio de velocidad de acceso o de integridad histórica.
+    </div>
+  </div>
+
+  <div class="hdiv"></div>
+  <p class="prose"><strong>La desnormalización NO es:</strong></p>
+  <ul class="ul">
+    <li><strong>Un error de diseño.</strong> Si se hace correctamente es una decisión técnica consciente, no un descuido.</li>
+    <li><strong>El punto de partida.</strong> Siempre se normaliza primero y luego se evalúa si desnormalizar aporta valor.</li>
+    <li><strong>Lo mismo que una base mal diseñada.</strong> Una tabla caótica sin estructura no es desnormalización — es ausencia de diseño.</li>
+  </ul>
+
+  <div class="comp">
+    <div class="comp-box cnorm">
+      <div class="comp-lbl"><span>📐</span> Modelo Normalizado (3FN)</div>
+      <div class="comp-body">Datos en tablas separadas. Sin redundancia. Actualizar un dato cambia <strong>un solo lugar</strong>. Las consultas requieren múltiples <code>JOIN</code>. Ideal para sistemas transaccionales donde los datos cambian constantemente.</div>
+    </div>
+    <div class="comp-box cdenorm">
+      <div class="comp-lbl"><span>⚡</span> Modelo Desnormalizado</div>
+      <div class="comp-body">Datos repetidos o combinados <strong>intencionalmente</strong>. Las consultas son más rápidas porque los datos ya están juntos. Actualizar un dato puede requerir cambios en múltiples lugares. Ideal para lectura intensiva o reportes.</div>
+    </div>
+  </div>
+
+  <div class="callout cg">
+    <div class="cmk">analogía</div>
+    <div class="cbody">
+      <strong>El índice de un libro</strong>
+      Un libro bien organizado tiene su contenido en los capítulos (normalizado). El índice al final repite los títulos y agrega los números de página (redundancia). Esa redundancia no es un error — es una herramienta de acceso rápido. La desnormalización funciona igual: agregás redundancia para hacer más rápido el acceso.
+    </div>
+  </div>
+</section>
+
+<!-- S2: ¿CUÁNDO SE USA? -->
+<section class="sec" id="s2">
+  <div class="sec-hd">
+    <div class="sec-num" style="background:var(--goldd);border:1px solid var(--goldb);color:var(--gold)">02</div>
+    <div>
+      <div class="sec-title">¿Cuándo se usa?</div>
+      <div class="sec-sub">Las condiciones que justifican romper la normalización</div>
+    </div>
+  </div>
+
+  <p class="prose">La desnormalización se aplica cuando el costo de la redundancia es menor que el costo del problema que resuelve. No es una decisión ligera — requiere medir antes de actuar.</p>
+
+  <div class="when-grid">
+    <div class="when-yes">
+      <div class="when-title">✓ &nbsp;Usá desnormalización cuando...</div>
+      <div class="when-item"><strong>Las consultas de lectura son lentas.</strong> Múltiples JOINs en tablas con millones de filas causan tiempos de respuesta inaceptables para el usuario.</div>
+      <div class="when-item"><strong>El sistema es principalmente de lectura.</strong> Plataformas de reportes, dashboards, analytics — donde se lee muchísimo y se escribe poco.</div>
+      <div class="when-item"><strong>Necesitás preservar datos históricos.</strong> El precio de un producto al momento de la venta, el nombre del cliente al momento del contrato — datos que no deben cambiar aunque la fuente original cambie.</div>
+      <div class="when-item"><strong>Los datos ya están normalizados.</strong> Desnormalizás sobre una base sólida, con conciencia de qué datos se duplican y por qué.</div>
+    </div>
+    <div class="when-no">
+      <div class="when-title">✗ &nbsp;No uses desnormalización cuando...</div>
+      <div class="when-item"><strong>El sistema aún no está normalizado.</strong> No tiene sentido desnormalizar una base que nunca fue normalizada — primero normalizás.</div>
+      <div class="when-item"><strong>No mediste el problema.</strong> Si no tenés datos de que las consultas son lentas, no tenés justificación para agregar complejidad.</div>
+      <div class="when-item"><strong>Los datos cambian muy frecuentemente.</strong> Si la fuente del dato cambia constantemente, mantener las copias sincronizadas se vuelve un problema mayor que el JOINs.</div>
+      <div class="when-item"><strong>El equipo no está de acuerdo.</strong> La desnormalización requiere documentación clara y consenso — si nadie sabe por qué está un campo duplicado, se convierte en deuda técnica.</div>
+    </div>
+  </div>
+
+  <div class="callout cg">
+    <div class="cmk">proceso</div>
+    <div class="cbody">
+      <strong>El orden correcto siempre es: normalizar → medir → desnormalizar si es necesario</strong>
+      Primero diseñás correctamente (3FN). Después ponés el sistema en producción y medís el rendimiento real. Si detectás cuellos de botella específicos, aplicás desnormalización quirúrgica en esos puntos. No en toda la base — solo donde el dato de performance lo justifica.
+    </div>
+  </div>
+</section>
+
+<!-- S3: TÉCNICAS -->
+<section class="sec" id="s3">
+  <div class="sec-hd">
+    <div class="sec-num" style="background:var(--slated);border:1px solid var(--slateb);color:var(--slate)">03</div>
+    <div>
+      <div class="sec-title">Técnicas de Desnormalización</div>
+      <div class="sec-sub">Las formas concretas de introducir redundancia controlada</div>
+    </div>
+  </div>
+
+  <p class="prose">Hay varias formas de desnormalizar. Cada una resuelve un problema distinto y tiene sus propios riesgos. No se usan todas juntas — se elige la técnica adecuada para el problema específico.</p>
+
+  <div class="tech-grid">
+    <div class="tech-card" style="border-color:var(--goldb)">
+      <div class="tech-num" style="color:var(--gold)">Técnica 1</div>
+      <div class="tech-name">Columnas redundantes</div>
+      <div class="tech-body">Copiar una columna de otra tabla para evitar un JOIN. Ej: guardar <code>nombre_categoria</code> directamente en la tabla de Producto, aunque Categoría ya existe como tabla separada.</div>
+    </div>
+    <div class="tech-card" style="border-color:var(--goldb)">
+      <div class="tech-num" style="color:var(--gold)">Técnica 2</div>
+      <div class="tech-name">Columnas calculadas (precalculadas)</div>
+      <div class="tech-body">Guardar el resultado de un cálculo para no repetirlo en cada consulta. Ej: <code>total_items_pedido</code> en la tabla Pedido, aunque podría calcularse sumando el DetallePedido.</div>
+    </div>
+    <div class="tech-card" style="border-color:var(--goldb)">
+      <div class="tech-num" style="color:var(--gold)">Técnica 3</div>
+      <div class="tech-name">Snapshot histórico</div>
+      <div class="tech-body">Guardar el valor de un dato <em>en el momento</em> en que ocurrió un evento, aunque ese dato cambie después. Ej: <code>precio_al_comprar</code> en DetallePedido — el precio del producto puede cambiar mañana, pero el precio de ese pedido ya está registrado.</div>
+    </div>
+    <div class="tech-card" style="border-color:var(--goldb)">
+      <div class="tech-num" style="color:var(--gold)">Técnica 4</div>
+      <div class="tech-name">Tablas de resumen (summary tables)</div>
+      <div class="tech-body">Crear tablas que almacenan resultados agregados que se consultan frecuentemente. Ej: <code>VentasMensuales(año, mes, total)</code> calculada y guardada en lugar de calcularse en tiempo real con millones de filas.</div>
+    </div>
+    <div class="tech-card" style="border-color:var(--goldb)">
+      <div class="tech-num" style="color:var(--gold)">Técnica 5</div>
+      <div class="tech-name">Combinación de tablas (merge)</div>
+      <div class="tech-body">Unir dos tablas que siempre se consultan juntas en una sola. Ej: fusionar la tabla <code>Usuario</code> y <code>Perfil_Usuario</code> si siempre se leen juntas y la relación es 1:1 estricta.</div>
+    </div>
+  </div>
+
+  <div class="callout cs">
+    <div class="cmk">!</div>
+    <div class="cbody">
+      <strong>Toda desnormalización debe estar documentada</strong>
+      Cuando agregás una columna redundante o una tabla de resumen, el código o el modelo debe dejar en claro que ese dato se repite intencionalmente, de dónde viene y qué proceso lo mantiene actualizado. Sin documentación, el equipo futuro no sabrá si es un error o una decisión.
+    </div>
+  </div>
+</section>
+
+<!-- S4: VENTAJAS Y DESVENTAJAS -->
+<section class="sec" id="s4">
+  <div class="sec-hd">
+    <div class="sec-num" style="background:var(--saged);border:1px solid var(--sageb);color:var(--sage)">04</div>
+    <div>
+      <div class="sec-title">Ventajas y Desventajas</div>
+      <div class="sec-sub">Qué ganás y qué cedés al desnormalizar</div>
+    </div>
+  </div>
+
+  <div class="vd-grid">
+    <div class="vd-box vd-ok">
+      <div class="vd-title"><span>✓</span> Ventajas</div>
+      <div class="vd-item"><span class="vd-icon" style="color:var(--sage)">→</span><div><strong>Consultas más rápidas.</strong> Al tener los datos ya combinados o precalculados, las consultas de lectura son notablemente más veloces — especialmente en tablas con millones de filas.</div></div>
+      <div class="vd-item"><span class="vd-icon" style="color:var(--sage)">→</span><div><strong>Menos JOINs.</strong> Una consulta que requería 5 JOINs puede hacerse en 1 o ninguno. Más simple para el motor y para el desarrollador que escribe la consulta.</div></div>
+      <div class="vd-item"><span class="vd-icon" style="color:var(--sage)">→</span><div><strong>Integridad histórica.</strong> El snapshot garantiza que los reportes del pasado sean correctos aunque los datos originales hayan cambiado. Un recibo de 2020 siempre muestra el precio de 2020.</div></div>
+      <div class="vd-item"><span class="vd-icon" style="color:var(--sage)">→</span><div><strong>Dashboards en tiempo real.</strong> Las tablas de resumen permiten que un dashboard muestre métricas complejas de forma instantánea, sin esperar que el motor calcule millones de filas.</div></div>
+      <div class="vd-item"><span class="vd-icon" style="color:var(--sage)">→</span><div><strong>Menor carga en el servidor.</strong> Precalcular y cachear resultados en la base de datos reduce la carga de CPU en los momentos de mayor tráfico.</div></div>
+    </div>
+    <div class="vd-box vd-no">
+      <div class="vd-title"><span>✗</span> Desventajas</div>
+      <div class="vd-item"><span class="vd-icon" style="color:var(--ember)">→</span><div><strong>Datos duplicados.</strong> La misma información existe en múltiples lugares. Si un dato cambia, hay que actualizarlo en todos sus duplicados o la base queda inconsistente.</div></div>
+      <div class="vd-item"><span class="vd-icon" style="color:var(--ember)">→</span><div><strong>Escrituras más complejas.</strong> Una inserción o actualización que antes tocaba una tabla ahora puede tocar tres. La lógica de escritura se vuelve más compleja y propensa a errores.</div></div>
+      <div class="vd-item"><span class="vd-icon" style="color:var(--ember)">→</span><div><strong>Mayor uso de espacio.</strong> Los datos duplicados ocupan más espacio en disco. Con tablas de resumen, el volumen total de la base crece.</div></div>
+      <div class="vd-item"><span class="vd-icon" style="color:var(--ember)">→</span><div><strong>Mayor costo de mantenimiento.</strong> El equipo debe saber qué datos están duplicados, por qué, y cómo mantenerlos sincronizados. Sin documentación esto se convierte en deuda técnica.</div></div>
+      <div class="vd-item"><span class="vd-icon" style="color:var(--ember)">→</span><div><strong>Riesgo de inconsistencia.</strong> Si el proceso que actualiza los duplicados falla a mitad de camino, la base queda con datos contradictorios. Requiere transacciones o jobs de sincronización robustos.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- S5: EJEMPLOS REALES -->
+<section class="sec" id="s5">
+  <div class="sec-hd">
+    <div class="sec-num" style="background:var(--inkd);border:1px solid var(--inkb);color:var(--ink)">05</div>
+    <div>
+      <div class="sec-title">Dos ejemplos reales revisados</div>
+      <div class="sec-sub">Casos auténticos donde la desnormalización es la solución correcta</div>
+    </div>
+  </div>
+
+  <div class="callout ci">
+    <div class="cmk">criterio</div>
+    <div class="cbody">
+      <strong>¿Cómo se validaron estos ejemplos?</strong>
+      Para cada uno se verificó que: (1) el modelo normalizado tiene un problema real que no se puede resolver con índices o vistas, (2) la desnormalización resuelve ese problema, y (3) hay un costo claro de redundancia que se acepta conscientemente.
+    </div>
+  </div>
+
+  <div class="ex-tabs" style="margin-top:22px">
+    <button class="ex-tab on" id="et1" onclick="showEx(1)">Ejemplo 1 · Snapshot de precio en e-commerce</button>
+    <button class="ex-tab" id="et2" onclick="showEx(2)">Ejemplo 2 · Tabla de resumen de ventas</button>
+  </div>
+
+  <!-- EJEMPLO 1: SNAPSHOT DE PRECIO -->
+  <div class="ex-panel on" id="ep1">
+
+    <p class="prose"><strong>El problema del precio histórico en un sistema de ventas</strong></p>
+    <p class="prose">Una tienda online guarda sus pedidos con referencia al producto. El modelo normalizado es impecable: el precio vive en la tabla Producto y DetallePedido solo guarda una FK al producto. Pero hay un problema grave escondido:</p>
+
+    <!-- MODELO NORMALIZADO -->
+    <div class="step-card">
+      <div class="step-hdr" style="background:var(--slated);border-bottom-color:var(--slateb)">
+        <span class="step-badge" style="background:var(--slated);color:var(--slate);border:1px solid var(--slateb)">ANTES</span>
+        <span class="step-title">Modelo normalizado — elegante pero con un fallo crítico</span>
+      </div>
+      <div class="step-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <div class="dt-lbl info">Tabla: Producto</div>
+            <div class="dt-wrap" style="margin-top:0">
+              <table class="dt">
+                <thead><tr><th>id_prod <span class="t tpk">PK</span></th><th>nombre</th><th>precio</th></tr></thead>
+                <tbody>
+                  <tr><td class="cpk">P01</td><td>Teclado Mecánico</td><td>$8.000</td></tr>
+                  <tr><td class="cpk">P02</td><td>Mouse Gamer</td><td>$5.500</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div>
+            <div class="dt-lbl info">Tabla: DetallePedido (normalizada)</div>
+            <div class="dt-wrap" style="margin-top:0">
+              <table class="dt">
+                <thead><tr><th>id_ped</th><th>id_prod <span class="t tfk">FK</span></th><th>cantidad</th></tr></thead>
+                <tbody>
+                  <tr><td class="cpk">100</td><td class="cfk">P01</td><td>1</td></tr>
+                  <tr><td class="cpk">101</td><td class="cfk">P02</td><td>2</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout ce" style="margin-top:14px">
+          <div class="cmk">problema</div>
+          <div class="cbody">
+            <strong>El fallo crítico del modelo normalizado en este caso</strong>
+            El pedido 100 fue hecho cuando el Teclado costaba $6.000. Hoy el precio en la tabla Producto es $8.000 (hubo un aumento). Si alguien consulta el historial del pedido 100 con este modelo, verá $8.000 — que es incorrecto. El cliente pagó $6.000. El sistema está mintiendo sobre su propia historia.
+          </div>
+        </div>
+
+        <div class="flow">
+          <div class="flow-node">Pedido 100</div>
+          <div class="flow-arr">→ JOIN →</div>
+          <div class="flow-node">DetallePedido (P01)</div>
+          <div class="flow-arr">→ JOIN →</div>
+          <div class="flow-node highlight">Producto.precio = $8.000 ❌</div>
+          <div class="flow-arr" style="color:var(--ember)">Pero debería ser $6.000</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SOLUCIÓN DESNORMALIZADA -->
+    <div class="step-card">
+      <div class="step-hdr" style="background:var(--goldd);border-bottom-color:var(--goldb)">
+        <span class="step-badge" style="background:var(--goldd);color:var(--gold);border:1px solid var(--goldb)">DESPUÉS</span>
+        <span class="step-title">Desnormalización — snapshot del precio al momento de compra</span>
+      </div>
+      <div class="step-body">
+        <p class="prose">La solución es agregar <code>precio_al_comprar</code> directamente en DetallePedido. Este campo captura el precio en el momento exacto en que se realizó el pedido y <strong>nunca se actualiza</strong> — es un registro histórico.</p>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <div class="dt-lbl info">Tabla: Producto (sin cambios)</div>
+            <div class="dt-wrap" style="margin-top:0">
+              <table class="dt">
+                <thead><tr><th>id_prod <span class="t tpk">PK</span></th><th>nombre</th><th>precio_actual</th></tr></thead>
+                <tbody>
+                  <tr><td class="cpk">P01</td><td>Teclado Mecánico</td><td>$8.000 (subió)</td></tr>
+                  <tr><td class="cpk">P02</td><td>Mouse Gamer</td><td>$5.500</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div>
+            <div class="dt-lbl good">DetallePedido desnormalizado — con snapshot</div>
+            <div class="dt-wrap" style="margin-top:0">
+              <table class="dt">
+                <thead><tr><th>id_ped</th><th>id_prod <span class="t tfk">FK</span></th><th>cant.</th><th>precio_al_comprar <span class="t tsnap">snapshot</span></th></tr></thead>
+                <tbody>
+                  <tr class="chigh"><td class="cpk">100</td><td class="cfk">P01</td><td>1</td><td class="csnap">$6.000 ✓</td></tr>
+                  <tr><td class="cpk">101</td><td class="cfk">P02</td><td>2</td><td class="csnap">$5.500 ✓</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout cv" style="margin-top:14px">
+          <div class="cmk">resultado</div>
+          <div class="cbody">
+            <strong>El precio histórico ahora es correcto — para siempre</strong>
+            El pedido 100 siempre mostrará $6.000, sin importar cuántas veces cambie el precio del Teclado en la tabla Producto. La redundancia es aceptada a cambio de integridad histórica garantizada. Este patrón se usa en <strong>todos los sistemas de e-commerce del mundo</strong>.
+          </div>
+        </div>
+
+        <div class="callout cg">
+          <div class="cmk">importante</div>
+          <div class="cbody">
+            <strong>¿Por qué este caso NO se puede resolver normalizando mejor?</strong>
+            Algunos podrían pensar en crear una tabla <code>HistorialPrecios(id_producto, precio, fecha_desde, fecha_hasta)</code>. Eso funciona pero agrega complejidad: la consulta del pedido requeriría un JOIN extra con condición de rango de fechas. El snapshot es más simple, más rápido y semánticamente correcto: "este fue el precio en ese momento".
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /ep1 -->
+
+  <!-- EJEMPLO 2: TABLA DE RESUMEN -->
+  <div class="ex-panel" id="ep2">
+
+    <p class="prose"><strong>Dashboard de métricas de ventas — el problema del tiempo real</strong></p>
+    <p class="prose">Una plataforma de e-commerce tiene un dashboard interno que el equipo comercial consulta todo el día. Muestra el total de ventas por mes, la cantidad de pedidos, y el ticket promedio. El modelo está correctamente normalizado en 3FN.</p>
+
+    <!-- PROBLEMA -->
+    <div class="step-card">
+      <div class="step-hdr" style="background:var(--slated);border-bottom-color:var(--slateb)">
+        <span class="step-badge" style="background:var(--slated);color:var(--slate);border:1px solid var(--slateb)">PROBLEMA</span>
+        <span class="step-title">Consultar el dashboard es lento — el modelo normalizado no alcanza</span>
+      </div>
+      <div class="step-body">
+        <p class="prose">Para mostrar "Ventas de Febrero", la consulta normalizada necesita hacer:</p>
+        <div class="sql-block">
+          <pre><span class="ks">SELECT</span>
+  <span class="ks">YEAR</span>(p.fecha) <span class="ks">AS</span> <span class="vs">anio</span>,
+  <span class="ks">MONTH</span>(p.fecha) <span class="ks">AS</span> <span class="vs">mes</span>,
+  <span class="ks">SUM</span>(dp.cantidad * dp.precio_unit) <span class="ks">AS</span> <span class="vs">total_ventas</span>,
+  <span class="ks">COUNT</span>(<span class="ks">DISTINCT</span> p.id_pedido) <span class="ks">AS</span> <span class="vs">cantidad_pedidos</span>,
+  <span class="ks">AVG</span>(sub.total_pedido) <span class="ks">AS</span> <span class="vs">ticket_promedio</span>
+<span class="ks">FROM</span> <span class="ts">Pedido</span> p
+  <span class="ks">JOIN</span> <span class="ts">DetallePedido</span> dp <span class="ks">ON</span> p.id_pedido = dp.id_pedido
+  <span class="ks">JOIN</span> (
+    <span class="ks">SELECT</span> id_pedido, <span class="ks">SUM</span>(cantidad * precio_unit) <span class="ks">AS</span> total_pedido
+    <span class="ks">FROM</span> <span class="ts">DetallePedido</span> <span class="ks">GROUP BY</span> id_pedido
+  ) sub <span class="ks">ON</span> p.id_pedido = sub.id_pedido
+<span class="ks">GROUP BY</span> <span class="ks">YEAR</span>(p.fecha), <span class="ks">MONTH</span>(p.fecha)
+<span class="ks">ORDER BY</span> anio, mes<span class="cs">;</span>
+<span class="cs">-- Con 10 millones de filas en DetallePedido: 8-15 segundos de respuesta ❌</span></pre>
+        </div>
+
+        <div class="callout ce">
+          <div class="cmk">problema</div>
+          <div class="cbody">
+            <strong>El dashboard tarda 8 a 15 segundos en cargar</strong>
+            Con millones de pedidos históricos, esa consulta recorre todas las filas cada vez que alguien abre el dashboard. Si el equipo comercial lo abre 50 veces por día, son 50 operaciones pesadas en la base de datos. El sistema se vuelve lento para todos.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SOLUCIÓN -->
+    <div class="step-card">
+      <div class="step-hdr" style="background:var(--goldd);border-bottom-color:var(--goldb)">
+        <span class="step-badge" style="background:var(--goldd);color:var(--gold);border:1px solid var(--goldb)">SOLUCIÓN</span>
+        <span class="step-title">Tabla de resumen — desnormalización para lectura veloz</span>
+      </div>
+      <div class="step-body">
+        <p class="prose">La solución es crear una tabla <code>Resumen_Ventas_Mensual</code> que <strong>precalcula y guarda</strong> los resultados. Un proceso automático la actualiza cada hora o al cierre de cada día.</p>
+
+        <div class="dt-lbl good">Nueva tabla: Resumen_Ventas_Mensual</div>
+        <div class="dt-wrap" style="margin-top:0">
+          <table class="dt">
+            <thead><tr>
+              <th>id <span class="t tpk">PK</span></th>
+              <th>anio</th><th>mes</th>
+              <th>total_ventas <span class="t tsnap">calculado</span></th>
+              <th>cant_pedidos <span class="t tsnap">calculado</span></th>
+              <th>ticket_promedio <span class="t tsnap">calculado</span></th>
+              <th>ultima_actualizacion</th>
+            </tr></thead>
+            <tbody>
+              <tr class="chigh"><td class="cpk">1</td><td>2026</td><td>01</td><td class="csnap">$4.820.000</td><td class="csnap">312</td><td class="csnap">$15.449</td><td>01/02 23:59</td></tr>
+              <tr class="chigh"><td class="cpk">2</td><td>2026</td><td>02</td><td class="csnap">$5.130.000</td><td class="csnap">341</td><td class="csnap">$15.044</td><td>28/02 23:59</td></tr>
+              <tr><td class="cpk">3</td><td>2026</td><td>03</td><td class="csnap">$2.140.000</td><td class="csnap">158</td><td class="csnap">$13.544</td><td>15/03 08:00</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="prose" style="margin-top:12px">La consulta del dashboard ahora es trivial:</p>
+        <div class="sql-block">
+          <pre><span class="cs">-- Con la tabla de resumen: consulta instantánea ✓</span>
+<span class="ks">SELECT</span> anio, mes, total_ventas, cant_pedidos, ticket_promedio
+<span class="ks">FROM</span> <span class="ts">Resumen_Ventas_Mensual</span>
+<span class="ks">ORDER BY</span> anio, mes<span class="cs">;</span>
+<span class="cs">-- Tiempo de respuesta: &lt; 10 ms ✓</span></pre>
+        </div>
+
+        <div class="callout cv" style="margin-top:14px">
+          <div class="cmk">trade-off</div>
+          <div class="cbody">
+            <strong>El costo aceptado</strong>
+            Los datos de la tabla de resumen pueden tener hasta 1 hora de retraso (o lo que el proceso de actualización tarde). Si alguien hace un pedido ahora, el total del dashboard no lo refleja de inmediato — lo hará en la próxima actualización. Para un dashboard gerencial, ese retraso es aceptable. Para un sistema de stock en tiempo real, no lo sería.
+          </div>
+        </div>
+
+        <div class="callout cg">
+          <div class="cmk">→</div>
+          <div class="cbody">
+            <strong>¿Los datos originales siguen normalizados?</strong>
+            Sí. Las tablas Pedido, DetallePedido, Cliente y Producto siguen en 3FN y sin cambios. La tabla de resumen es <em>adicional</em> — no reemplaza las tablas normalizadas, las complementa. Los reportes detallados siguen usando las tablas originales; solo el dashboard usa la tabla de resumen.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /ep2 -->
+
+</section>
+
+<!-- S6: DBML -->
+<section class="sec" id="s6">
+  <div class="sec-hd">
+    <div class="sec-num" style="background:var(--copperd);border:1px solid var(--copperb);color:var(--copper)">06</div>
+    <div>
+      <div class="sec-title">Modelos en DBML</div>
+      <div class="sec-sub">Los dos modelos desnormalizados, listos para pegar en dbdiagram.io</div>
+    </div>
+  </div>
+
+  <p class="prose">Copiá cualquiera de los dos bloques y pegalo en <strong>dbdiagram.io</strong> para visualizar el modelo completo.</p>
+
+  <p class="prose" style="margin-bottom:6px"><strong>Ejemplo 1 — E-commerce con snapshot de precio:</strong></p>
+  <div class="dbml-wrap">
+    <div class="dbml-block" id="d1"><pre>
+<span class="kw">Table</span> <span class="tb">Cliente</span> {
+  dni      <span class="tp">varchar(10)</span>   [<span class="pk">pk</span>]
+  nombre   <span class="tp">varchar(100)</span>
+  apellido <span class="tp">varchar(100)</span>
+  email    <span class="tp">varchar(120)</span>
+}
+
+<span class="kw">Table</span> <span class="tb">Producto</span> {
+  id_producto   <span class="tp">varchar(10)</span>   [<span class="pk">pk</span>]
+  nombre        <span class="tp">varchar(150)</span>
+  precio_actual <span class="tp">float</span>         <span class="cm">// precio vigente hoy</span>
+  stock         <span class="tp">int</span>
+}
+
+<span class="kw">Table</span> <span class="tb">Pedido</span> {
+  id_pedido   <span class="tp">int</span>          [<span class="pk">pk</span>, increment]
+  fecha       <span class="tp">datetime</span>
+  dni_cliente <span class="tp">varchar(10)</span>  [<span class="rf">ref: > Cliente.dni</span>]
+  estado      <span class="tp">varchar(20)</span>  <span class="cm">// 'pendiente', 'enviado', 'entregado'</span>
+}
+
+<span class="kw">Table</span> <span class="tb">DetallePedido</span> {
+  id_pedido        <span class="tp">int</span>          [<span class="rf">ref: > Pedido.id_pedido</span>]
+  id_producto      <span class="tp">varchar(10)</span>  [<span class="rf">ref: > Producto.id_producto</span>]
+  cantidad         <span class="tp">int</span>
+  precio_al_comprar <span class="tp">float</span>       <span class="cm">// DESNORMALIZADO — snapshot historico</span>
+  <span class="cm">// Este campo copia Producto.precio_actual al momento de crear el pedido.</span>
+  <span class="cm">// Nunca se actualiza. Garantiza que los reportes historicos sean correctos</span>
+  <span class="cm">// aunque el precio del producto cambie en el futuro.</span>
+
+  indexes {
+    (id_pedido, id_producto) [<span class="pk">pk</span>]
+  }
+}
+</pre></div>
+    <button class="copy-btn" onclick="doCopy('d1',this)">Copiar</button>
+  </div>
+
+  <p class="prose" style="margin-top:22px;margin-bottom:6px"><strong>Ejemplo 2 — Dashboard con tabla de resumen:</strong></p>
+  <div class="dbml-wrap">
+    <div class="dbml-block" id="d2"><pre>
+<span class="cm">// ── Modelo normalizado (sin cambios) ───────────────────</span>
+<span class="kw">Table</span> <span class="tb">Pedido</span> {
+  id_pedido   <span class="tp">int</span>      [<span class="pk">pk</span>, increment]
+  fecha       <span class="tp">datetime</span>
+  dni_cliente <span class="tp">varchar(10)</span>
+}
+
+<span class="kw">Table</span> <span class="tb">DetallePedido</span> {
+  id_pedido   <span class="tp">int</span>         [<span class="rf">ref: > Pedido.id_pedido</span>]
+  id_producto <span class="tp">varchar(10)</span>
+  cantidad    <span class="tp">int</span>
+  precio_unit <span class="tp">float</span>
+
+  indexes { (id_pedido, id_producto) [<span class="pk">pk</span>] }
+}
+
+<span class="cm">// ── Tabla de resumen DESNORMALIZADA ────────────────────</span>
+<span class="kw">Table</span> <span class="tb">Resumen_Ventas_Mensual</span> {
+  id                  <span class="tp">int</span>       [<span class="pk">pk</span>, increment]
+  anio                <span class="tp">int</span>
+  mes                 <span class="tp">int</span>
+  total_ventas        <span class="tp">float</span>     <span class="cm">// DESNORMALIZADO — precalculado</span>
+  cantidad_pedidos    <span class="tp">int</span>       <span class="cm">// DESNORMALIZADO — precalculado</span>
+  ticket_promedio     <span class="tp">float</span>     <span class="cm">// DESNORMALIZADO — precalculado</span>
+  ultima_actualizacion <span class="tp">datetime</span> <span class="cm">// cuando fue recalculado por ultima vez</span>
+
+  indexes { (anio, mes) [<span class="un">unique</span>] }
+  <span class="cm">// Esta tabla NO reemplaza las tablas normalizadas.</span>
+  <span class="cm">// Es una copia calculada para lectura rapida del dashboard.</span>
+  <span class="cm">// Se actualiza via job automatico cada hora o al cierre del dia.</span>
+  <span class="cm">// Para reportes detallados usar Pedido + DetallePedido directamente.</span>
+}
+</pre></div>
+    <button class="copy-btn" onclick="doCopy('d2',this)">Copiar</button>
+  </div>
+
+  <div class="callout cc">
+    <div class="cmk">resumen</div>
+    <div class="cbody">
+      <strong>Los dos patrones de desnormalización más comunes</strong>
+      El <em>snapshot histórico</em> (precio al comprar) resuelve el problema de integridad temporal — los datos del pasado no deben cambiar aunque la fuente original cambie. La <em>tabla de resumen</em> resuelve el problema de velocidad de lectura — las métricas ya están calculadas y no se recalculan en cada consulta. Son herramientas distintas para problemas distintos.
+    </div>
+  </div>
+</section>
+
+</div><!-- /wrap -->
+
+<script>
+function toggleTheme(){
+  const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';
+  h.setAttribute('data-theme',d?'light':'dark');
+  document.getElementById('tlbl').textContent=d?'claro':'oscuro';
+}
+window.addEventListener('scroll',()=>{
+  document.getElementById('prog').style.width=(window.scrollY/(document.body.scrollHeight-window.innerHeight)*100)+'%';
+});
+(()=>{
+  const obs=new IntersectionObserver(en=>{
+    en.forEach(e=>{if(e.isIntersecting){const id='#'+e.target.id;
+      document.querySelectorAll('a.nl').forEach(l=>l.classList.toggle('on',l.getAttribute('href')===id));}});
+  },{rootMargin:'-25% 0px -65% 0px'});
+  document.querySelectorAll('section.sec').forEach(s=>obs.observe(s));
+})();
+function showEx(n){[1,2].forEach(i=>{document.getElementById('ep'+i).classList.toggle('on',i===n);document.getElementById('et'+i).classList.toggle('on',i===n);});}
+function doCopy(id,btn){
+  navigator.clipboard.writeText(document.getElementById(id).innerText).then(()=>{
+    btn.textContent='¡Copiado!';btn.classList.add('done');
+    setTimeout(()=>{btn.textContent='Copiar';btn.classList.remove('done');},2200);
+  });
+}
+</script>
+</body>
+</html>
