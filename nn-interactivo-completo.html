@@ -1,1110 +1,2144 @@
-<!DOCTYPE html>
-<html lang="es" data-theme="dark">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>N a N — Mal vs Bien · Interactivo</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
-<style>
-  /* ══════════════════════════════════════════════
+<!doctype html>
+<html lang="es" data-theme="light">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>N a N — Mal vs Bien · Interactivo</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Lato:wght@300;400;700&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            /* ══════════════════════════════════════════════
      TEMAS
   ══════════════════════════════════════════════ */
-  [data-theme="dark"] {
-    --bg:           #0c0e13;
-    --surface:      #11141b;
-    --surface2:     #181c26;
-    --surface3:     #1d2130;
-    --border:       #22273a;
-    --text:         #e2e4ee;
-    --muted:        #505570;
-    --muted2:       #7a8099;
-    --nav-bg:       #0e1018;
-    --nav-border:   #1e2235;
-    --input-bg:     #11141b;
-    --thead-bg:     #181c26;
-    --row-hover:    rgba(255,255,255,0.02);
-    --row-border:   rgba(255,255,255,0.035);
-    --hint-bg:      rgba(0,0,0,0.18);
-    --code-bg:      #1d2130;
-    --code-color:   #7a8099;
-  }
-  [data-theme="light"] {
-    --bg:           #f2f4f8;
-    --surface:      #ffffff;
-    --surface2:     #eef0f5;
-    --surface3:     #e4e6f0;
-    --border:       #d2d6e8;
-    --text:         #1a1d2a;
-    --muted:        #8890aa;
-    --muted2:       #5a6280;
-    --nav-bg:       #ffffff;
-    --nav-border:   #d2d6e8;
-    --input-bg:     #ffffff;
-    --thead-bg:     #eef0f5;
-    --row-hover:    rgba(0,0,0,0.02);
-    --row-border:   rgba(0,0,0,0.055);
-    --hint-bg:      rgba(0,0,0,0.035);
-    --code-bg:      #e4e6f0;
-    --code-color:   #5a6280;
-  }
+            [data-theme="dark"] {
+                --bg: #0c0e13;
+                --surface: #11141b;
+                --surface2: #181c26;
+                --surface3: #1d2130;
+                --border: #22273a;
+                --text: #e2e4ee;
+                --muted: #505570;
+                --muted2: #7a8099;
+                --nav-bg: #0e1018;
+                --nav-border: #1e2235;
+                --input-bg: #11141b;
+                --thead-bg: #181c26;
+                --row-hover: rgba(255, 255, 255, 0.02);
+                --row-border: rgba(255, 255, 255, 0.035);
+                --hint-bg: rgba(0, 0, 0, 0.18);
+                --code-bg: #1d2130;
+                --code-color: #7a8099;
+            }
+            [data-theme="light"] {
+                --bg: #f2f4f8;
+                --surface: #ffffff;
+                --surface2: #eef0f5;
+                --surface3: #e4e6f0;
+                --border: #d2d6e8;
+                --text: #1a1d2a;
+                --muted: #8890aa;
+                --muted2: #5a6280;
+                --nav-bg: #ffffff;
+                --nav-border: #d2d6e8;
+                --input-bg: #ffffff;
+                --thead-bg: #eef0f5;
+                --row-hover: rgba(0, 0, 0, 0.02);
+                --row-border: rgba(0, 0, 0, 0.055);
+                --hint-bg: rgba(0, 0, 0, 0.035);
+                --code-bg: #e4e6f0;
+                --code-color: #5a6280;
+            }
 
-  /* accent — mismo en ambos temas */
-  :root {
-    --green:        #00c98a;
-    --green-dim:    rgba(0,201,138,0.08);
-    --green-border: rgba(0,201,138,0.25);
-    --blue:         #4a7de0;
-    --yellow:       #c89a00;
-    --yellow-dim:   rgba(200,154,0,0.07);
-    --yellow-border:rgba(200,154,0,0.3);
-    --red:          #e03c3c;
-    --red-dim:      rgba(224,60,60,0.07);
-    --red-border:   rgba(224,60,60,0.28);
-  }
+            /* accent — mismo en ambos temas */
+            :root {
+                --green: #00c98a;
+                --green-dim: rgba(0, 201, 138, 0.08);
+                --green-border: rgba(0, 201, 138, 0.25);
+                --blue: #4a7de0;
+                --yellow: #c89a00;
+                --yellow-dim: rgba(200, 154, 0, 0.07);
+                --yellow-border: rgba(200, 154, 0, 0.3);
+                --red: #e03c3c;
+                --red-dim: rgba(224, 60, 60, 0.07);
+                --red-border: rgba(224, 60, 60, 0.28);
+            }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
 
-  body {
-    font-family: 'Lato', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    padding-bottom: 80px;
-    transition: background 0.22s, color 0.22s;
-  }
+            body {
+                font-family: "Lato", sans-serif;
+                background: var(--bg);
+                color: var(--text);
+                min-height: 100vh;
+                padding-bottom: 80px;
+                transition:
+                    background 0.22s,
+                    color 0.22s;
+            }
 
-  /* ══════════════════════════════════════════════
+            /* ══════════════════════════════════════════════
      NAVBAR
   ══════════════════════════════════════════════ */
-  .navbar {
-    height: 40px;
-    background: var(--nav-bg);
-    border-bottom: 1px solid var(--nav-border);
-    display: flex;
-    align-items: center;
-    padding: 0 16px;
-    gap: 4px;
-    position: sticky; top: 0; z-index: 200;
-    transition: background 0.22s, border-color 0.22s;
-  }
-  .nav-brand {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.7rem; font-weight: 600;
-    color: var(--green);
-    display: flex; align-items: center; gap: 6px;
-    margin-right: 8px; white-space: nowrap;
-  }
-  .nav-brand-dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--green);
-  }
-  .nav-divider { width: 1px; height: 16px; background: var(--border); margin: 0 4px; }
-  .nav-link {
-    font-family: 'Lato', sans-serif;
-    font-size: 0.72rem; font-weight: 700;
-    color: var(--muted);
-    background: transparent; border: none;
-    padding: 4px 9px; border-radius: 5px;
-    cursor: pointer; text-decoration: none;
-    transition: color 0.14s, background 0.14s;
-    white-space: nowrap;
-    display: flex; align-items: center; gap: 4px;
-  }
-  .nav-link:hover  { color: var(--text); background: var(--surface2); }
-  .nav-link.active { color: var(--text); background: var(--surface2); }
-  .nav-spacer { flex: 1; }
+            .navbar {
+                height: 40px;
+                background: var(--nav-bg);
+                border-bottom: 1px solid var(--nav-border);
+                display: flex;
+                align-items: center;
+                padding: 0 16px;
+                gap: 4px;
+                position: sticky;
+                top: 0;
+                z-index: 200;
+                transition:
+                    background 0.22s,
+                    border-color 0.22s;
+            }
+            .nav-brand {
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.7rem;
+                font-weight: 600;
+                color: var(--green);
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                margin-right: 8px;
+                white-space: nowrap;
+            }
+            .nav-brand-dot {
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: var(--green);
+            }
+            .nav-divider {
+                width: 1px;
+                height: 16px;
+                background: var(--border);
+                margin: 0 4px;
+            }
+            .nav-link {
+                font-family: "Lato", sans-serif;
+                font-size: 0.72rem;
+                font-weight: 700;
+                color: var(--muted);
+                background: transparent;
+                border: none;
+                padding: 4px 9px;
+                border-radius: 5px;
+                cursor: pointer;
+                text-decoration: none;
+                transition:
+                    color 0.14s,
+                    background 0.14s;
+                white-space: nowrap;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+            .nav-link:hover {
+                color: var(--text);
+                background: var(--surface2);
+            }
+            .nav-link.active {
+                color: var(--text);
+                background: var(--surface2);
+            }
+            .nav-spacer {
+                flex: 1;
+            }
 
-  /* theme toggle */
-  .theme-toggle {
-    display: flex; align-items: center; gap: 6px;
-    cursor: pointer; user-select: none;
-  }
-  .toggle-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.63rem; color: var(--muted);
-    white-space: nowrap;
-  }
-  .toggle-track {
-    width: 34px; height: 18px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    position: relative;
-    transition: background 0.2s, border-color 0.2s;
-  }
-  [data-theme="dark"] .toggle-track {
-    background: rgba(0,201,138,0.16);
-    border-color: rgba(0,201,138,0.3);
-  }
-  .toggle-thumb {
-    position: absolute; top: 2px; left: 2px;
-    width: 12px; height: 12px;
-    border-radius: 50%; background: var(--muted);
-    transition: left 0.2s, background 0.2s;
-  }
-  [data-theme="dark"] .toggle-thumb { left: 18px; background: var(--green); }
-  .toggle-icon { font-size: 0.62rem; color: var(--muted); }
+            /* theme toggle */
+            .theme-toggle {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                cursor: pointer;
+                user-select: none;
+            }
+            .toggle-label {
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.63rem;
+                color: var(--muted);
+                white-space: nowrap;
+            }
+            .toggle-track {
+                width: 34px;
+                height: 18px;
+                background: var(--surface2);
+                border: 1px solid var(--border);
+                border-radius: 20px;
+                position: relative;
+                transition:
+                    background 0.2s,
+                    border-color 0.2s;
+            }
+            [data-theme="dark"] .toggle-track {
+                background: rgba(0, 201, 138, 0.16);
+                border-color: rgba(0, 201, 138, 0.3);
+            }
+            .toggle-thumb {
+                position: absolute;
+                top: 2px;
+                left: 2px;
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: var(--muted);
+                transition:
+                    left 0.2s,
+                    background 0.2s;
+            }
+            [data-theme="dark"] .toggle-thumb {
+                left: 18px;
+                background: var(--green);
+            }
+            .toggle-icon {
+                font-size: 0.62rem;
+                color: var(--muted);
+            }
 
-  /* ══════════════════════════════════════════════
+            /* ══════════════════════════════════════════════
      HERO
   ══════════════════════════════════════════════ */
-  .hero {
-    padding: 42px 24px 34px;
-    text-align: center;
-    border-bottom: 1px solid var(--border);
-    position: relative; overflow: hidden;
-  }
-  .hero::before {
-    content: '';
-    position: absolute; inset: 0;
-    background:
-      radial-gradient(ellipse 45% 90% at 18% 50%, rgba(224,60,60,0.06) 0%, transparent 65%),
-      radial-gradient(ellipse 45% 90% at 82% 50%, rgba(0,201,138,0.06) 0%, transparent 65%);
-    pointer-events: none;
-  }
-  .hero-label {
-    display: inline-flex; align-items: center; gap: 7px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
-    color: var(--muted2); background: var(--surface2);
-    border: 1px solid var(--border);
-    padding: 4px 12px; border-radius: 20px; margin-bottom: 16px;
-  }
-  .hero h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(1.55rem, 4vw, 2.5rem);
-    font-weight: 800; line-height: 1.15; margin-bottom: 10px;
-  }
-  .hero h1 .bad  { color: var(--red); }
-  .hero h1 .good { color: var(--green); }
-  .hero p { color: var(--muted2); font-size: 0.9rem; max-width: 510px; margin: 0 auto; line-height: 1.6; }
+            .hero {
+                padding: 42px 24px 34px;
+                text-align: center;
+                border-bottom: 1px solid var(--border);
+                position: relative;
+                overflow: hidden;
+            }
+            .hero::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background:
+                    radial-gradient(
+                        ellipse 45% 90% at 18% 50%,
+                        rgba(224, 60, 60, 0.06) 0%,
+                        transparent 65%
+                    ),
+                    radial-gradient(
+                        ellipse 45% 90% at 82% 50%,
+                        rgba(0, 201, 138, 0.06) 0%,
+                        transparent 65%
+                    );
+                pointer-events: none;
+            }
+            .hero-label {
+                display: inline-flex;
+                align-items: center;
+                gap: 7px;
+                font-family: "JetBrains Mono", monospace;
+                font-size: 10px;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                color: var(--muted2);
+                background: var(--surface2);
+                border: 1px solid var(--border);
+                padding: 4px 12px;
+                border-radius: 20px;
+                margin-bottom: 16px;
+            }
+            .hero h1 {
+                font-family: "Syne", sans-serif;
+                font-size: clamp(1.55rem, 4vw, 2.5rem);
+                font-weight: 800;
+                line-height: 1.15;
+                margin-bottom: 10px;
+            }
+            .hero h1 .bad {
+                color: var(--red);
+            }
+            .hero h1 .good {
+                color: var(--green);
+            }
+            .hero p {
+                color: var(--muted2);
+                font-size: 0.9rem;
+                max-width: 510px;
+                margin: 0 auto;
+                line-height: 1.6;
+            }
 
-  /* ══════════════════════════════════════════════
+            /* ══════════════════════════════════════════════
      CONTENT TABS  (sticky = top: navbar height)
   ══════════════════════════════════════════════ */
-  .tab-nav {
-    display: flex;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface);
-    position: sticky; top: 0; z-index: 100;
-    transition: background 0.22s;
-  }
-  .tab-btn {
-    flex: 1; padding: 12px 10px;
-    background: transparent; border: none;
-    font-family: 'Syne', sans-serif;
-    font-size: 0.83rem; font-weight: 700;
-    cursor: pointer; color: var(--muted);
-    border-bottom: 3px solid transparent;
-    transition: all 0.18s;
-    display: flex; align-items: center; justify-content: center; gap: 7px;
-  }
-  .tab-btn:hover          { color: var(--muted2); background: var(--surface2); }
-  .tab-btn.active-bad     { color: var(--red);   border-bottom-color: var(--red);   background: var(--red-dim); }
-  .tab-btn.active-good    { color: var(--green); border-bottom-color: var(--green); background: var(--green-dim); }
+            .tab-nav {
+                display: flex;
+                border-bottom: 1px solid var(--border);
+                background: var(--surface);
+                position: sticky;
+                top: 0;
+                z-index: 100;
+                transition: background 0.22s;
+            }
+            .tab-btn {
+                flex: 1;
+                padding: 12px 10px;
+                background: transparent;
+                border: none;
+                font-family: "Syne", sans-serif;
+                font-size: 0.83rem;
+                font-weight: 700;
+                cursor: pointer;
+                color: var(--muted);
+                border-bottom: 3px solid transparent;
+                transition: all 0.18s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 7px;
+            }
+            .tab-btn:hover {
+                color: var(--muted2);
+                background: var(--surface2);
+            }
+            .tab-btn.active-bad {
+                color: var(--red);
+                border-bottom-color: var(--red);
+                background: var(--red-dim);
+            }
+            .tab-btn.active-good {
+                color: var(--green);
+                border-bottom-color: var(--green);
+                background: var(--green-dim);
+            }
 
-  .tab-panel { display: none; }
-  .tab-panel.active { display: block; }
+            .tab-panel {
+                display: none;
+            }
+            .tab-panel.active {
+                display: block;
+            }
 
-  /* ══════════════════════════════════════════════
+            /* ══════════════════════════════════════════════
      LAYOUT
   ══════════════════════════════════════════════ */
-  .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
-  .section   { padding: 28px 0 0; }
+            .container {
+                max-width: 1000px;
+                margin: 0 auto;
+                padding: 0 20px;
+            }
+            .section {
+                padding: 28px 0 0;
+            }
 
-  /* ══════════════════════════════════════════════
+            /* ══════════════════════════════════════════════
      PANEL BANNER
   ══════════════════════════════════════════════ */
-  .panel-banner {
-    border-radius: 10px; padding: 14px 18px; margin-bottom: 24px;
-    display: flex; align-items: flex-start; gap: 12px;
-  }
-  .panel-banner.bad  { background: var(--red-dim);   border: 1px solid var(--red-border); }
-  .panel-banner.good { background: var(--green-dim); border: 1px solid var(--green-border); }
-  .banner-icon { font-size: 1.3rem; flex-shrink: 0; }
-  .banner-body h3 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem; margin-bottom: 3px; }
-  .panel-banner.bad  .banner-body h3 { color: var(--red); }
-  .panel-banner.good .banner-body h3 { color: var(--green); }
-  .banner-body p { font-size: 0.82rem; color: var(--muted2); line-height: 1.55; margin: 0; }
+            .panel-banner {
+                border-radius: 10px;
+                padding: 14px 18px;
+                margin-bottom: 24px;
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            .panel-banner.bad {
+                background: var(--red-dim);
+                border: 1px solid var(--red-border);
+            }
+            .panel-banner.good {
+                background: var(--green-dim);
+                border: 1px solid var(--green-border);
+            }
+            .banner-icon {
+                font-size: 1.3rem;
+                flex-shrink: 0;
+            }
+            .banner-body h3 {
+                font-family: "Syne", sans-serif;
+                font-weight: 700;
+                font-size: 0.95rem;
+                margin-bottom: 3px;
+            }
+            .panel-banner.bad .banner-body h3 {
+                color: var(--red);
+            }
+            .panel-banner.good .banner-body h3 {
+                color: var(--green);
+            }
+            .banner-body p {
+                font-size: 0.82rem;
+                color: var(--muted2);
+                line-height: 1.55;
+                margin: 0;
+            }
 
-  /* ══════════════════════════════════════════════
+            /* ══════════════════════════════════════════════
      SECTION LABEL
   ══════════════════════════════════════════════ */
-  .section-label {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.88rem; font-weight: 700;
-    margin-bottom: 13px;
-    display: flex; align-items: center; gap: 9px;
-  }
-  .section-label::after { content:''; flex:1; height:1px; background: var(--border); }
-  .section-label.red    { color: var(--red); }
-  .section-label.green  { color: var(--green); }
-  .section-label.yellow { color: var(--yellow); }
+            .section-label {
+                font-family: "Syne", sans-serif;
+                font-size: 0.88rem;
+                font-weight: 700;
+                margin-bottom: 13px;
+                display: flex;
+                align-items: center;
+                gap: 9px;
+            }
+            .section-label::after {
+                content: "";
+                flex: 1;
+                height: 1px;
+                background: var(--border);
+            }
+            .section-label.red {
+                color: var(--red);
+            }
+            .section-label.green {
+                color: var(--green);
+            }
+            .section-label.yellow {
+                color: var(--yellow);
+            }
 
-  /* ══════════════════════════════════════════════
+            /* ══════════════════════════════════════════════
      TABLE BLOCK
   ══════════════════════════════════════════════ */
-  .tbl-block {
-    margin-bottom: 20px; border-radius: 12px;
-    border: 1px solid var(--border); overflow: hidden;
-    background: var(--surface);
-    transition: border-color 0.18s, background 0.22s;
-  }
-  .tbl-block.bad-block   { border-color: rgba(224,60,60,0.22); }
-  .tbl-block.bad-block:focus-within   { border-color: rgba(224,60,60,0.5); }
-  .tbl-block.good-block  { border-color: rgba(0,201,138,0.2); }
-  .tbl-block.good-block:focus-within  { border-color: rgba(0,201,138,0.45); }
-  .tbl-block.pivot-block { border-color: rgba(200,154,0,0.22); }
-  .tbl-block.pivot-block:focus-within { border-color: rgba(200,154,0,0.55); }
+            .tbl-block {
+                margin-bottom: 20px;
+                border-radius: 12px;
+                border: 1px solid var(--border);
+                overflow: hidden;
+                background: var(--surface);
+                transition:
+                    border-color 0.18s,
+                    background 0.22s;
+            }
+            .tbl-block.bad-block {
+                border-color: rgba(224, 60, 60, 0.22);
+            }
+            .tbl-block.bad-block:focus-within {
+                border-color: rgba(224, 60, 60, 0.5);
+            }
+            .tbl-block.good-block {
+                border-color: rgba(0, 201, 138, 0.2);
+            }
+            .tbl-block.good-block:focus-within {
+                border-color: rgba(0, 201, 138, 0.45);
+            }
+            .tbl-block.pivot-block {
+                border-color: rgba(200, 154, 0, 0.22);
+            }
+            .tbl-block.pivot-block:focus-within {
+                border-color: rgba(200, 154, 0, 0.55);
+            }
 
-  .tbl-header-bar {
-    padding: 10px 16px;
-    display: flex; align-items: center; justify-content: space-between; gap: 9px;
-    border-bottom: 1px solid var(--border);
-  }
-  .tbl-header-bar.bad-h   { background: rgba(224,60,60,0.05);  border-bottom-color: rgba(224,60,60,0.12); }
-  .tbl-header-bar.good-h  { background: rgba(0,201,138,0.04);  border-bottom-color: rgba(0,201,138,0.1); }
-  .tbl-header-bar.pivot-h { background: rgba(200,154,0,0.04);  border-bottom-color: rgba(200,154,0,0.12); }
+            .tbl-header-bar {
+                padding: 10px 16px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 9px;
+                border-bottom: 1px solid var(--border);
+            }
+            .tbl-header-bar.bad-h {
+                background: rgba(224, 60, 60, 0.05);
+                border-bottom-color: rgba(224, 60, 60, 0.12);
+            }
+            .tbl-header-bar.good-h {
+                background: rgba(0, 201, 138, 0.04);
+                border-bottom-color: rgba(0, 201, 138, 0.1);
+            }
+            .tbl-header-bar.pivot-h {
+                background: rgba(200, 154, 0, 0.04);
+                border-bottom-color: rgba(200, 154, 0, 0.12);
+            }
 
-  .tbl-title {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.84rem; font-weight: 600;
-    display: flex; align-items: center; gap: 7px;
-  }
-  .tbl-title.bad-t   { color: var(--red); }
-  .tbl-title.good-t  { color: var(--green); }
-  .tbl-title.pivot-t { color: var(--yellow); }
-  .tbl-sub { font-size: 0.65rem; color: var(--muted); font-weight: 400; margin-left: 2px; }
+            .tbl-title {
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.84rem;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 7px;
+            }
+            .tbl-title.bad-t {
+                color: var(--red);
+            }
+            .tbl-title.good-t {
+                color: var(--green);
+            }
+            .tbl-title.pivot-t {
+                color: var(--yellow);
+            }
+            .tbl-sub {
+                font-size: 0.65rem;
+                color: var(--muted);
+                font-weight: 400;
+                margin-left: 2px;
+            }
 
-  .tbl-right { display: flex; align-items: center; gap: 8px; }
-  .row-count {
-    font-family: 'JetBrains Mono', monospace; font-size: 0.67rem;
-    background: var(--surface2); border: 1px solid var(--border);
-    padding: 2px 8px; border-radius: 20px; color: var(--muted2); white-space: nowrap;
-    transition: background 0.22s;
-  }
-  .tbl-meta { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--muted); }
+            .tbl-right {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .row-count {
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.67rem;
+                background: var(--surface2);
+                border: 1px solid var(--border);
+                padding: 2px 8px;
+                border-radius: 20px;
+                color: var(--muted2);
+                white-space: nowrap;
+                transition: background 0.22s;
+            }
+            .tbl-meta {
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.65rem;
+                color: var(--muted);
+            }
 
-  /* ── Table data ─────────────────────────────── */
-  .tbl-scroll { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 0.81rem; }
-  thead tr { background: var(--thead-bg); transition: background 0.22s; }
-  thead th {
-    padding: 8px 14px; text-align: left;
-    font-family: 'JetBrains Mono', monospace; font-size: 0.66rem;
-    letter-spacing: 0.5px; color: var(--muted);
-    border-bottom: 1px solid var(--border);
-    white-space: nowrap; font-weight: 500;
-  }
-  tbody tr { border-bottom: 1px solid var(--row-border); transition: background 0.1s; }
-  tbody tr:last-child { border-bottom: none; }
-  tbody tr:hover { background: var(--row-hover); }
-  tbody td { padding: 8px 14px; white-space: nowrap; vertical-align: middle; color: var(--text); }
+            /* ── Table data ─────────────────────────────── */
+            .tbl-scroll {
+                overflow-x: auto;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 0.81rem;
+            }
+            thead tr {
+                background: var(--thead-bg);
+                transition: background 0.22s;
+            }
+            thead th {
+                padding: 8px 14px;
+                text-align: left;
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.66rem;
+                letter-spacing: 0.5px;
+                color: var(--muted);
+                border-bottom: 1px solid var(--border);
+                white-space: nowrap;
+                font-weight: 500;
+            }
+            tbody tr {
+                border-bottom: 1px solid var(--row-border);
+                transition: background 0.1s;
+            }
+            tbody tr:last-child {
+                border-bottom: none;
+            }
+            tbody tr:hover {
+                background: var(--row-hover);
+            }
+            tbody td {
+                padding: 8px 14px;
+                white-space: nowrap;
+                vertical-align: middle;
+                color: var(--text);
+            }
 
-  .c-pk     { color: var(--green); font-family:'JetBrains Mono',monospace; font-size:.78rem; font-weight:600; }
-  .c-fk-g   { color: var(--green); font-family:'JetBrains Mono',monospace; font-size:.78rem; }
-  .c-fk-b   { color: var(--blue);  font-family:'JetBrains Mono',monospace; font-size:.78rem; }
-  .c-fk-bad { color: var(--red);   font-family:'JetBrains Mono',monospace; font-size:.78rem; }
-  .c-null   { color: var(--muted); font-family:'JetBrains Mono',monospace; font-size:.74rem; font-style:italic; }
+            .c-pk {
+                color: var(--green);
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.78rem;
+                font-weight: 600;
+            }
+            .c-fk-g {
+                color: var(--green);
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.78rem;
+            }
+            .c-fk-b {
+                color: var(--blue);
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.78rem;
+            }
+            .c-fk-bad {
+                color: var(--red);
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.78rem;
+            }
+            .c-null {
+                color: var(--muted);
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.74rem;
+                font-style: italic;
+            }
 
-  .tag { display:inline-block; font-size:8px; padding:1px 4px; border-radius:3px; margin-left:3px; font-family:'JetBrains Mono',monospace; vertical-align:middle; }
-  .tag-pk  { background:rgba(0,201,138,0.14); color:var(--green); }
-  .tag-fkg { background:rgba(0,201,138,0.1);  color:var(--green); }
-  .tag-fkb { background:rgba(74,125,224,0.12);color:var(--blue); }
-  .tag-fkr { background:rgba(224,60,60,0.12); color:var(--red); }
+            .tag {
+                display: inline-block;
+                font-size: 8px;
+                padding: 1px 4px;
+                border-radius: 3px;
+                margin-left: 3px;
+                font-family: "JetBrains Mono", monospace;
+                vertical-align: middle;
+            }
+            .tag-pk {
+                background: rgba(0, 201, 138, 0.14);
+                color: var(--green);
+            }
+            .tag-fkg {
+                background: rgba(0, 201, 138, 0.1);
+                color: var(--green);
+            }
+            .tag-fkb {
+                background: rgba(74, 125, 224, 0.12);
+                color: var(--blue);
+            }
+            .tag-fkr {
+                background: rgba(224, 60, 60, 0.12);
+                color: var(--red);
+            }
 
-  .empty-row td {
-    text-align:center; padding:18px;
-    color:var(--muted); font-size:.77rem;
-    font-family:'JetBrains Mono',monospace; font-style:italic;
-  }
+            .empty-row td {
+                text-align: center;
+                padding: 18px;
+                color: var(--muted);
+                font-size: 0.77rem;
+                font-family: "JetBrains Mono", monospace;
+                font-style: italic;
+            }
 
-  /* ── Delete btn ─────────────────────────────── */
-  .btn-del {
-    background:transparent; border:1px solid rgba(224,60,60,0.18);
-    color:rgba(224,60,60,0.4); width:23px; height:23px;
-    border-radius:5px; cursor:pointer; font-size:.7rem;
-    display:flex; align-items:center; justify-content:center;
-    transition:all .14s;
-  }
-  .btn-del:hover { background:rgba(224,60,60,0.1); color:var(--red); border-color:var(--red-border); }
+            /* ── Delete btn ─────────────────────────────── */
+            .btn-del {
+                background: transparent;
+                border: 1px solid rgba(224, 60, 60, 0.18);
+                color: rgba(224, 60, 60, 0.4);
+                width: 23px;
+                height: 23px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 0.7rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.14s;
+            }
+            .btn-del:hover {
+                background: rgba(224, 60, 60, 0.1);
+                color: var(--red);
+                border-color: var(--red-border);
+            }
 
-  /* ── Add form ───────────────────────────────── */
-  .add-form {
-    background: var(--surface2); border-top: 1px solid var(--border);
-    padding: 12px 16px;
-    display:flex; align-items:flex-end; gap:8px; flex-wrap:wrap;
-    transition: background 0.22s;
-  }
-  .add-form.bad-form   { border-top-color: rgba(224,60,60,0.12); }
-  .add-form.good-form  { border-top-color: rgba(0,201,138,0.1);  }
-  .add-form.pivot-form { border-top-color: rgba(200,154,0,0.12); }
+            /* ── Add form ───────────────────────────────── */
+            .add-form {
+                background: var(--surface2);
+                border-top: 1px solid var(--border);
+                padding: 12px 16px;
+                display: flex;
+                align-items: flex-end;
+                gap: 8px;
+                flex-wrap: wrap;
+                transition: background 0.22s;
+            }
+            .add-form.bad-form {
+                border-top-color: rgba(224, 60, 60, 0.12);
+            }
+            .add-form.good-form {
+                border-top-color: rgba(0, 201, 138, 0.1);
+            }
+            .add-form.pivot-form {
+                border-top-color: rgba(200, 154, 0, 0.12);
+            }
 
-  .fg { display:flex; flex-direction:column; gap:3px; }
-  .fl {
-    font-family:'JetBrains Mono',monospace; font-size:.62rem;
-    color:var(--muted); letter-spacing:.4px; text-transform:uppercase;
-  }
-  .fi {
-    background:var(--input-bg); border:1px solid var(--border);
-    color:var(--text); font-family:'JetBrains Mono',monospace;
-    font-size:.78rem; padding:5px 9px; border-radius:6px;
-    outline:none; transition:border-color .14s, box-shadow .14s, background .22s;
-    min-width:82px; max-width:162px;
-  }
-  .fi:focus              { border-color:rgba(255,255,255,0.18); box-shadow:0 0 0 3px rgba(255,255,255,0.04); }
-  .fi.fi-bad:focus       { border-color:rgba(224,60,60,0.4);    box-shadow:0 0 0 3px rgba(224,60,60,0.06); }
-  .fi.fi-good:focus      { border-color:rgba(0,201,138,0.4);    box-shadow:0 0 0 3px rgba(0,201,138,0.06); }
-  .fi.fi-pivot:focus     { border-color:rgba(200,154,0,0.4);    box-shadow:0 0 0 3px rgba(200,154,0,0.05); }
-  .fi::placeholder { color:var(--muted); }
-  [data-theme="light"] .fi:focus { box-shadow:0 0 0 3px rgba(0,0,0,0.05); }
+            .fg {
+                display: flex;
+                flex-direction: column;
+                gap: 3px;
+            }
+            .fl {
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.62rem;
+                color: var(--muted);
+                letter-spacing: 0.4px;
+                text-transform: uppercase;
+            }
+            .fi {
+                background: var(--input-bg);
+                border: 1px solid var(--border);
+                color: var(--text);
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.78rem;
+                padding: 5px 9px;
+                border-radius: 6px;
+                outline: none;
+                transition:
+                    border-color 0.14s,
+                    box-shadow 0.14s,
+                    background 0.22s;
+                min-width: 82px;
+                max-width: 162px;
+            }
+            .fi:focus {
+                border-color: rgba(255, 255, 255, 0.18);
+                box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.04);
+            }
+            .fi.fi-bad:focus {
+                border-color: rgba(224, 60, 60, 0.4);
+                box-shadow: 0 0 0 3px rgba(224, 60, 60, 0.06);
+            }
+            .fi.fi-good:focus {
+                border-color: rgba(0, 201, 138, 0.4);
+                box-shadow: 0 0 0 3px rgba(0, 201, 138, 0.06);
+            }
+            .fi.fi-pivot:focus {
+                border-color: rgba(200, 154, 0, 0.4);
+                box-shadow: 0 0 0 3px rgba(200, 154, 0, 0.05);
+            }
+            .fi::placeholder {
+                color: var(--muted);
+            }
+            [data-theme="light"] .fi:focus {
+                box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+            }
 
-  select.fi {
-    cursor:pointer; appearance:none;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");
-    background-repeat:no-repeat; background-position:right 8px center;
-    padding-right:24px;
-  }
+            select.fi {
+                cursor: pointer;
+                appearance: none;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");
+                background-repeat: no-repeat;
+                background-position: right 8px center;
+                padding-right: 24px;
+            }
 
-  .btn-add {
-    border:none; padding:5px 13px; border-radius:6px;
-    font-family:'Syne',sans-serif; font-weight:700; font-size:.77rem;
-    cursor:pointer; white-space:nowrap;
-    display:flex; align-items:center; gap:4px; height:30px;
-    transition:opacity .14s, transform .1s;
-  }
-  .btn-add:hover  { opacity:.84; transform:translateY(-1px); }
-  .btn-add:active { transform:translateY(0); }
-  .btn-add.bad-btn   { background:rgba(224,60,60,0.88); color:#fff; }
-  .btn-add.good-btn  { background:var(--green); color:#fff; }
-  .btn-add.pivot-btn { background:var(--yellow); color:#fff; }
+            .btn-add {
+                border: none;
+                padding: 5px 13px;
+                border-radius: 6px;
+                font-family: "Syne", sans-serif;
+                font-weight: 700;
+                font-size: 0.77rem;
+                cursor: pointer;
+                white-space: nowrap;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                height: 30px;
+                transition:
+                    opacity 0.14s,
+                    transform 0.1s;
+            }
+            .btn-add:hover {
+                opacity: 0.84;
+                transform: translateY(-1px);
+            }
+            .btn-add:active {
+                transform: translateY(0);
+            }
+            .btn-add.bad-btn {
+                background: rgba(224, 60, 60, 0.88);
+                color: #fff;
+            }
+            .btn-add.good-btn {
+                background: var(--green);
+                color: #fff;
+            }
+            .btn-add.pivot-btn {
+                background: var(--yellow);
+                color: #fff;
+            }
 
-  /* ── Conflict / hint panels ─────────────────── */
-  .conflict-panel {
-    background:var(--red-dim); border:1px solid var(--red-border);
-    border-radius:10px; padding:14px 18px; margin-top:6px; margin-bottom:10px;
-  }
-  .conflict-title {
-    font-family:'Syne',sans-serif; font-weight:700;
-    font-size:.83rem; color:var(--red);
-    margin-bottom:8px; display:flex; align-items:center; gap:7px;
-  }
-  .conflict-list { display:flex; flex-direction:column; gap:5px; }
-  .conflict-item {
-    font-family:'JetBrains Mono',monospace; font-size:.73rem;
-    color:var(--muted2); display:flex; align-items:flex-start; gap:8px; line-height:1.5;
-  }
-  .conflict-item::before { content:'→'; color:var(--red); flex-shrink:0; }
+            /* ── Conflict / hint panels ─────────────────── */
+            .conflict-panel {
+                background: var(--red-dim);
+                border: 1px solid var(--red-border);
+                border-radius: 10px;
+                padding: 14px 18px;
+                margin-top: 6px;
+                margin-bottom: 10px;
+            }
+            .conflict-title {
+                font-family: "Syne", sans-serif;
+                font-weight: 700;
+                font-size: 0.83rem;
+                color: var(--red);
+                margin-bottom: 8px;
+                display: flex;
+                align-items: center;
+                gap: 7px;
+            }
+            .conflict-list {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+            }
+            .conflict-item {
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.73rem;
+                color: var(--muted2);
+                display: flex;
+                align-items: flex-start;
+                gap: 8px;
+                line-height: 1.5;
+            }
+            .conflict-item::before {
+                content: "→";
+                color: var(--red);
+                flex-shrink: 0;
+            }
 
-  .hint-bar {
-    display:flex; gap:7px; align-items:center;
-    font-family:'JetBrains Mono',monospace; font-size:.67rem;
-    color:var(--muted); padding:8px 16px;
-    background:var(--hint-bg); border-top:1px solid var(--border);
-  }
-  .hint-dot { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
-  .hint-dot.red    { background:var(--red); }
-  .hint-dot.yellow { background:var(--yellow); }
-  .hint-dot.green  { background:var(--green); }
+            .hint-bar {
+                display: flex;
+                gap: 7px;
+                align-items: center;
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.67rem;
+                color: var(--muted);
+                padding: 8px 16px;
+                background: var(--hint-bg);
+                border-top: 1px solid var(--border);
+            }
+            .hint-dot {
+                width: 5px;
+                height: 5px;
+                border-radius: 50%;
+                flex-shrink: 0;
+            }
+            .hint-dot.red {
+                background: var(--red);
+            }
+            .hint-dot.yellow {
+                background: var(--yellow);
+            }
+            .hint-dot.green {
+                background: var(--green);
+            }
 
-  /* ── Row animations ─────────────────────────── */
-  @keyframes rowInGreen  { from{opacity:0;background:rgba(0,201,138,0.1) } to{opacity:1;background:transparent} }
-  @keyframes rowInRed    { from{opacity:0;background:rgba(224,60,60,0.1) } to{opacity:1;background:transparent} }
-  @keyframes rowInYellow { from{opacity:0;background:rgba(200,154,0,0.1) } to{opacity:1;background:transparent} }
-  @keyframes rowOut      { from{opacity:1} to{opacity:0;transform:translateX(-6px)} }
-  .ani-green  { animation:rowInGreen  .42s ease forwards; }
-  .ani-red    { animation:rowInRed    .42s ease forwards; }
-  .ani-yellow { animation:rowInYellow .42s ease forwards; }
-  .ani-out    { animation:rowOut      .2s  ease forwards; }
+            /* ── Row animations ─────────────────────────── */
+            @keyframes rowInGreen {
+                from {
+                    opacity: 0;
+                    background: rgba(0, 201, 138, 0.1);
+                }
+                to {
+                    opacity: 1;
+                    background: transparent;
+                }
+            }
+            @keyframes rowInRed {
+                from {
+                    opacity: 0;
+                    background: rgba(224, 60, 60, 0.1);
+                }
+                to {
+                    opacity: 1;
+                    background: transparent;
+                }
+            }
+            @keyframes rowInYellow {
+                from {
+                    opacity: 0;
+                    background: rgba(200, 154, 0, 0.1);
+                }
+                to {
+                    opacity: 1;
+                    background: transparent;
+                }
+            }
+            @keyframes rowOut {
+                from {
+                    opacity: 1;
+                }
+                to {
+                    opacity: 0;
+                    transform: translateX(-6px);
+                }
+            }
+            .ani-green {
+                animation: rowInGreen 0.42s ease forwards;
+            }
+            .ani-red {
+                animation: rowInRed 0.42s ease forwards;
+            }
+            .ani-yellow {
+                animation: rowInYellow 0.42s ease forwards;
+            }
+            .ani-out {
+                animation: rowOut 0.2s ease forwards;
+            }
 
-  /* ── Toast ──────────────────────────────────── */
-  .toast-wrap {
-    position:fixed; bottom:18px; right:18px;
-    display:flex; flex-direction:column; gap:6px;
-    z-index:9999; pointer-events:none;
-  }
-  .toast {
-    padding:10px 14px; border-radius:8px;
-    font-family:'JetBrains Mono',monospace; font-size:.73rem;
-    max-width:300px; line-height:1.5;
-    display:flex; align-items:flex-start; gap:8px;
-    animation:tIn .2s ease, tOut .26s ease 2.6s forwards;
-    pointer-events:none;
-  }
-  .toast.ok   { background:var(--surface); border:1px solid rgba(0,201,138,0.35);  color:var(--green); }
-  .toast.err  { background:var(--surface); border:1px solid rgba(224,60,60,0.35);  color:var(--red); }
-  .toast.warn { background:var(--surface); border:1px solid rgba(200,154,0,0.35);  color:var(--yellow); }
-  @keyframes tIn  { from{opacity:0;transform:translateX(12px)} to{opacity:1;transform:translateX(0)} }
-  @keyframes tOut { to  {opacity:0;transform:translateX(8px)} }
+            /* ── Toast ──────────────────────────────────── */
+            .toast-wrap {
+                position: fixed;
+                bottom: 18px;
+                right: 18px;
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                z-index: 9999;
+                pointer-events: none;
+            }
+            .toast {
+                padding: 10px 14px;
+                border-radius: 8px;
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.73rem;
+                max-width: 300px;
+                line-height: 1.5;
+                display: flex;
+                align-items: flex-start;
+                gap: 8px;
+                animation:
+                    tIn 0.2s ease,
+                    tOut 0.26s ease 2.6s forwards;
+                pointer-events: none;
+            }
+            .toast.ok {
+                background: var(--surface);
+                border: 1px solid rgba(0, 201, 138, 0.35);
+                color: var(--green);
+            }
+            .toast.err {
+                background: var(--surface);
+                border: 1px solid rgba(224, 60, 60, 0.35);
+                color: var(--red);
+            }
+            .toast.warn {
+                background: var(--surface);
+                border: 1px solid rgba(200, 154, 0, 0.35);
+                color: var(--yellow);
+            }
+            @keyframes tIn {
+                from {
+                    opacity: 0;
+                    transform: translateX(12px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+            @keyframes tOut {
+                to {
+                    opacity: 0;
+                    transform: translateX(8px);
+                }
+            }
 
-  /* ── Grid / misc ────────────────────────────── */
-  .compare-grid {
-    display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:12px;
-  }
-  code {
-    font-family:'JetBrains Mono',monospace;
-    background:var(--code-bg); border-radius:4px;
-    padding:1px 5px; font-size:.8em; color:var(--code-color);
-    transition:background .22s;
-  }
+            /* ── Grid / misc ────────────────────────────── */
+            .compare-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 14px;
+                margin-top: 12px;
+            }
+            code {
+                font-family: "JetBrains Mono", monospace;
+                background: var(--code-bg);
+                border-radius: 4px;
+                padding: 1px 5px;
+                font-size: 0.8em;
+                color: var(--code-color);
+                transition: background 0.22s;
+            }
 
-  @media(max-width:640px){
-    .compare-grid{ grid-template-columns:1fr; }
-    .tab-btn{ font-size:.75rem; padding:11px 5px; }
-    .navbar{ padding:0 10px; }
-    .toggle-label{ display:none; }
-  }
-</style>
-</head>
-<body>
-
-<!-- ══════════════════════════════════════════════
+            @media (max-width: 640px) {
+                .compare-grid {
+                    grid-template-columns: 1fr;
+                }
+                .tab-btn {
+                    font-size: 0.75rem;
+                    padding: 11px 5px;
+                }
+                .navbar {
+                    padding: 0 10px;
+                }
+                .toggle-label {
+                    display: none;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- ══════════════════════════════════════════════
      NAVBAR
 ══════════════════════════════════════════════ -->
-<nav class="navbar">
-  <div class="nav-brand">
-    <div class="nav-brand-dot"></div>
-    DB·Didáctico
-  </div>
-  <div class="nav-divider"></div>
-  <a class="nav-link active" href="#">N a N</a>
-  <!-- Más links futuros acá -->
-  <div class="nav-spacer"></div>
-  <div class="theme-toggle" onclick="toggleTheme()" title="Cambiar tema claro / oscuro">
-    <span class="toggle-icon">claro</span>
-    <div class="toggle-track"><div class="toggle-thumb"></div></div>
-    <span class="toggle-icon">oscuro</span>
-    <span class="toggle-label" id="theme-label">Oscuro</span>
-  </div>
-</nav>
+        <nav class="navbar">
+            <div class="nav-brand">
+                <div class="nav-brand-dot"></div>
+                DB·Didáctico
+            </div>
+            <div class="nav-divider"></div>
+            <a class="nav-link active" href="#">N a N</a>
+            <!-- Más links futuros acá -->
+            <div class="nav-spacer"></div>
+            <div
+                class="theme-toggle"
+                onclick="toggleTheme()"
+                title="Cambiar tema claro / oscuro"
+            >
+                <span class="toggle-icon">claro</span>
+                <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                <span class="toggle-icon">oscuro</span>
+                <span class="toggle-label" id="theme-label">Oscuro</span>
+            </div>
+        </nav>
 
-<!-- ══════════════════════════════════════════════
+        <!-- ══════════════════════════════════════════════
      CONTENT TABS
 ══════════════════════════════════════════════ -->
-<div class="tab-nav">
-  <button class="tab-btn active-bad"  id="tab-bad"  onclick="switchTab('bad')">Diseño Incorrecto — FK directas</button>
-  <button class="tab-btn"             id="tab-good" onclick="switchTab('good')">Diseño Correcto — Tabla Intermedia</button>
-</div>
+        <div class="tab-nav">
+            <button
+                class="tab-btn active-bad"
+                id="tab-bad"
+                onclick="switchTab('bad')"
+            >
+                Diseño Incorrecto — FK directas
+            </button>
+            <button class="tab-btn" id="tab-good" onclick="switchTab('good')">
+                Diseño Correcto — Tabla Intermedia
+            </button>
+        </div>
 
-<!-- ══════════════════════════════════════════════
+        <!-- ══════════════════════════════════════════════
      HERO
 ══════════════════════════════════════════════ -->
-<div class="hero">
-  <div class="hero-label">Base de Datos · N a N · Interactivo</div>
-  <h1>Tablas en vivo:<br><span class="bad">diseño incorrecto</span> vs <span class="good">diseño correcto</span></h1>
-  <p>Probá agregar y eliminar registros en ambos modelos. El legajo es la PK de alumnos en los dos casos.</p>
-</div>
+        <div class="hero">
+            <div class="hero-label">Base de Datos · N a N · Interactivo</div>
+            <h1>
+                Tablas en vivo:<br /><span class="bad">diseño incorrecto</span>
+                vs <span class="good">diseño correcto</span>
+            </h1>
+            <p>
+                Probá agregar y eliminar registros en ambos modelos. El legajo
+                es la PK de alumnos en los dos casos.
+            </p>
+        </div>
 
-<!-- ══════════════════════════════════════════════
+        <!-- ══════════════════════════════════════════════
      PANEL: MAL
 ══════════════════════════════════════════════ -->
-<div class="tab-panel active" id="panel-bad">
-<div class="container"><div class="section">
+        <div class="tab-panel active" id="panel-bad">
+            <div class="container">
+                <div class="section">
+                    <div class="panel-banner bad">
+                        <span class="banner-icon"></span>
+                        <div class="banner-body">
+                            <h3>
+                                Modelo incorrecto: FK cruzadas en ambas tablas
+                            </h3>
+                            <p>
+                                <code>alumnos</code> tiene
+                                <code>id_materia</code> y
+                                <code>materias</code> tiene
+                                <code>legajo_alumno</code>. El
+                                <strong>legajo es la PK</strong> de alumnos.
+                                Intentá inscribir a un alumno en más de una
+                                materia para ver el problema.
+                            </p>
+                        </div>
+                    </div>
 
-  <div class="panel-banner bad">
-    <span class="banner-icon"></span>
-    <div class="banner-body">
-      <h3>Modelo incorrecto: FK cruzadas en ambas tablas</h3>
-      <p><code>alumnos</code> tiene <code>id_materia</code> y <code>materias</code> tiene <code>legajo_alumno</code>. El <strong>legajo es la PK</strong> de alumnos. Intentá inscribir a un alumno en más de una materia para ver el problema.</p>
-    </div>
-  </div>
+                    <div class="section-label red">Tablas con FK directas</div>
 
-  <div class="section-label red">Tablas con FK directas</div>
+                    <!-- ALUMNOS MAL -->
+                    <div class="tbl-block bad-block">
+                        <div class="tbl-header-bar bad-h">
+                            <div class="tbl-title bad-t">
+                                alumnos
+                                <span class="tbl-sub"
+                                    >— con id_materia directo</span
+                                >
+                            </div>
+                            <div class="tbl-right">
+                                <span class="tbl-meta">PK: legajo</span>
+                                <span class="row-count" id="cnt-bad-alumnos"
+                                    >3 registros</span
+                                >
+                            </div>
+                        </div>
+                        <div class="tbl-scroll">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            legajo
+                                            <span class="tag tag-pk">PK</span>
+                                        </th>
+                                        <th>nombre</th>
+                                        <th>apellido</th>
+                                        <th>
+                                            id_materia
+                                            <span class="tag tag-fkr"
+                                                >FK ⚠</span
+                                            >
+                                        </th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-bad-alumnos"></tbody>
+                            </table>
+                        </div>
+                        <div class="add-form bad-form">
+                            <div class="fg">
+                                <span class="fl">legajo * (PK)</span
+                                ><input
+                                    class="fi fi-bad"
+                                    id="b-al-legajo"
+                                    placeholder="ej: A-004"
+                                    maxlength="20"
+                                    style="max-width: 96px"
+                                />
+                            </div>
+                            <div class="fg">
+                                <span class="fl">nombre *</span
+                                ><input
+                                    class="fi fi-bad"
+                                    id="b-al-nombre"
+                                    placeholder="ej: Carlos"
+                                    maxlength="50"
+                                />
+                            </div>
+                            <div class="fg">
+                                <span class="fl">apellido *</span
+                                ><input
+                                    class="fi fi-bad"
+                                    id="b-al-apellido"
+                                    placeholder="ej: Ruiz"
+                                    maxlength="50"
+                                />
+                            </div>
+                            <div class="fg">
+                                <span class="fl"
+                                    >id_materia
+                                    <span style="color: var(--red)"
+                                        >(FK)</span
+                                    ></span
+                                >
+                                <select
+                                    class="fi fi-bad"
+                                    id="b-al-materia"
+                                    style="max-width: 158px"
+                                >
+                                    <option value="">null</option>
+                                </select>
+                            </div>
+                            <button
+                                class="btn-add bad-btn"
+                                onclick="addBadAlumno()"
+                            >
+                                ＋ Agregar
+                            </button>
+                        </div>
+                        <div class="hint-bar">
+                            <div class="hint-dot red"></div>
+                            Legajo es PK — único e irrepetible. Solo podés
+                            asignar
+                            <strong style="margin: 0 3px">una</strong> materia
+                            por alumno.
+                        </div>
+                    </div>
 
-  <!-- ALUMNOS MAL -->
-  <div class="tbl-block bad-block">
-    <div class="tbl-header-bar bad-h">
-      <div class="tbl-title bad-t">alumnos <span class="tbl-sub">— con id_materia directo</span></div>
-      <div class="tbl-right">
-        <span class="tbl-meta">PK: legajo</span>
-        <span class="row-count" id="cnt-bad-alumnos">3 registros</span>
-      </div>
-    </div>
-    <div class="tbl-scroll"><table>
-      <thead><tr>
-        <th>legajo <span class="tag tag-pk">PK</span></th>
-        <th>nombre</th><th>apellido</th>
-        <th>id_materia <span class="tag tag-fkr">FK ⚠</span></th>
-        <th></th>
-      </tr></thead>
-      <tbody id="tbody-bad-alumnos"></tbody>
-    </table></div>
-    <div class="add-form bad-form">
-      <div class="fg"><span class="fl">legajo * (PK)</span><input class="fi fi-bad" id="b-al-legajo" placeholder="ej: A-004" maxlength="20" style="max-width:96px"></div>
-      <div class="fg"><span class="fl">nombre *</span><input class="fi fi-bad" id="b-al-nombre" placeholder="ej: Carlos" maxlength="50"></div>
-      <div class="fg"><span class="fl">apellido *</span><input class="fi fi-bad" id="b-al-apellido" placeholder="ej: Ruiz" maxlength="50"></div>
-      <div class="fg">
-        <span class="fl">id_materia <span style="color:var(--red)">(FK)</span></span>
-        <select class="fi fi-bad" id="b-al-materia" style="max-width:158px"><option value="">null</option></select>
-      </div>
-      <button class="btn-add bad-btn" onclick="addBadAlumno()">＋ Agregar</button>
-    </div>
-    <div class="hint-bar">
-      <div class="hint-dot red"></div>
-      Legajo es PK — único e irrepetible. Solo podés asignar <strong style="margin:0 3px">una</strong> materia por alumno.
-    </div>
-  </div>
+                    <!-- MATERIAS MAL -->
+                    <div class="tbl-block bad-block">
+                        <div class="tbl-header-bar bad-h">
+                            <div class="tbl-title bad-t">
+                                materias
+                                <span class="tbl-sub"
+                                    >— con legajo_alumno directo</span
+                                >
+                            </div>
+                            <div class="tbl-right">
+                                <span class="tbl-meta"
+                                    >PK: id_materia · manual</span
+                                >
+                                <span class="row-count" id="cnt-bad-materias"
+                                    >3 registros</span
+                                >
+                            </div>
+                        </div>
+                        <div class="tbl-scroll">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            id_materia
+                                            <span class="tag tag-pk">PK</span>
+                                        </th>
+                                        <th>nombre</th>
+                                        <th>
+                                            legajo_alumno
+                                            <span class="tag tag-fkr"
+                                                >FK ⚠</span
+                                            >
+                                        </th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-bad-materias"></tbody>
+                            </table>
+                        </div>
+                        <div class="add-form bad-form">
+                            <div class="fg">
+                                <span class="fl">id_materia * (PK)</span
+                                ><input
+                                    class="fi fi-bad"
+                                    id="b-mat-id"
+                                    type="number"
+                                    min="1"
+                                    placeholder="ej: 4"
+                                    style="max-width: 80px"
+                                />
+                            </div>
+                            <div class="fg">
+                                <span class="fl">nombre *</span
+                                ><input
+                                    class="fi fi-bad"
+                                    id="b-mat-nombre"
+                                    placeholder="ej: Programación"
+                                    maxlength="80"
+                                />
+                            </div>
+                            <div class="fg">
+                                <span class="fl"
+                                    >legajo alumno
+                                    <span style="color: var(--red)"
+                                        >(FK)</span
+                                    ></span
+                                >
+                                <select
+                                    class="fi fi-bad"
+                                    id="b-mat-alumno"
+                                    style="max-width: 162px"
+                                >
+                                    <option value="">null</option>
+                                </select>
+                            </div>
+                            <button
+                                class="btn-add bad-btn"
+                                onclick="addBadMateria()"
+                            >
+                                ＋ Agregar
+                            </button>
+                        </div>
+                        <div class="hint-bar">
+                            <div class="hint-dot red"></div>
+                            Ingresá el id a mano — intentá repetir uno existente
+                            para ver la violación de PK. Solo podés asignar
+                            <strong style="margin: 0 3px">un</strong> alumno por
+                            materia.
+                        </div>
+                    </div>
 
-  <!-- MATERIAS MAL -->
-  <div class="tbl-block bad-block">
-    <div class="tbl-header-bar bad-h">
-      <div class="tbl-title bad-t">materias <span class="tbl-sub">— con legajo_alumno directo</span></div>
-      <div class="tbl-right">
-        <span class="tbl-meta">PK: id_materia · manual</span>
-        <span class="row-count" id="cnt-bad-materias">3 registros</span>
-      </div>
-    </div>
-    <div class="tbl-scroll"><table>
-      <thead><tr>
-        <th>id_materia <span class="tag tag-pk">PK</span></th>
-        <th>nombre</th>
-        <th>legajo_alumno <span class="tag tag-fkr">FK ⚠</span></th>
-        <th></th>
-      </tr></thead>
-      <tbody id="tbody-bad-materias"></tbody>
-    </table></div>
-    <div class="add-form bad-form">
-      <div class="fg"><span class="fl">id_materia * (PK)</span><input class="fi fi-bad" id="b-mat-id" type="number" min="1" placeholder="ej: 4" style="max-width:80px"></div>
-      <div class="fg"><span class="fl">nombre *</span><input class="fi fi-bad" id="b-mat-nombre" placeholder="ej: Programación" maxlength="80"></div>
-      <div class="fg">
-        <span class="fl">legajo alumno <span style="color:var(--red)">(FK)</span></span>
-        <select class="fi fi-bad" id="b-mat-alumno" style="max-width:162px"><option value="">null</option></select>
-      </div>
-      <button class="btn-add bad-btn" onclick="addBadMateria()">＋ Agregar</button>
-    </div>
-    <div class="hint-bar">
-      <div class="hint-dot red"></div>
-      Ingresá el id a mano — intentá repetir uno existente para ver la violación de PK. Solo podés asignar <strong style="margin:0 3px">un</strong> alumno por materia.
-    </div>
-  </div>
+                    <div class="conflict-panel">
+                        <div class="conflict-title">
+                            Problemas estructurales de este diseño
+                        </div>
+                        <div class="conflict-list">
+                            <div class="conflict-item">
+                                Intentá agregar a "Ana" con dos materias
+                                distintas: necesitás duplicar la fila, pero el
+                                legajo es PK — la base lo rechaza.
+                            </div>
+                            <div class="conflict-item">
+                                Intentá poner 30 alumnos en "Base de Datos": la
+                                materia tiene un solo campo
+                                <code>legajo_alumno</code>, no alcanza.
+                            </div>
+                            <div class="conflict-item">
+                                La relación aparece duplicada (en alumnos Y en
+                                materias) y pueden contradecirse entre sí.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-  <div class="conflict-panel">
-    <div class="conflict-title">Problemas estructurales de este diseño</div>
-    <div class="conflict-list">
-      <div class="conflict-item">Intentá agregar a "Ana" con dos materias distintas: necesitás duplicar la fila, pero el legajo es PK — la base lo rechaza.</div>
-      <div class="conflict-item">Intentá poner 30 alumnos en "Base de Datos": la materia tiene un solo campo <code>legajo_alumno</code>, no alcanza.</div>
-      <div class="conflict-item">La relación aparece duplicada (en alumnos Y en materias) y pueden contradecirse entre sí.</div>
-    </div>
-  </div>
-
-</div></div></div>
-
-<!-- ══════════════════════════════════════════════
+        <!-- ══════════════════════════════════════════════
      PANEL: BIEN
 ══════════════════════════════════════════════ -->
-<div class="tab-panel" id="panel-good">
-<div class="container"><div class="section">
+        <div class="tab-panel" id="panel-good">
+            <div class="container">
+                <div class="section">
+                    <div class="panel-banner good">
+                        <span class="banner-icon"></span>
+                        <div class="banner-body">
+                            <h3>
+                                Modelo correcto: tabla intermedia
+                                <code>inscripciones</code>
+                            </h3>
+                            <p>
+                                Las tablas están limpias, sin FK entre sí. El
+                                <strong>legajo es la PK</strong> de alumnos.
+                                Toda la relación N a N vive en
+                                <code>inscripciones</code> con PK compuesta
+                                <code>(legajo, id_materia)</code>.
+                            </p>
+                        </div>
+                    </div>
 
-  <div class="panel-banner good">
-    <span class="banner-icon"></span>
-    <div class="banner-body">
-      <h3>Modelo correcto: tabla intermedia <code>inscripciones</code></h3>
-      <p>Las tablas están limpias, sin FK entre sí. El <strong>legajo es la PK</strong> de alumnos. Toda la relación N a N vive en <code>inscripciones</code> con PK compuesta <code>(legajo, id_materia)</code>.</p>
-    </div>
-  </div>
+                    <div class="section-label green">
+                        Tablas principales — limpias
+                    </div>
 
-  <div class="section-label green">Tablas principales — limpias</div>
+                    <div class="compare-grid">
+                        <!-- ALUMNOS BIEN -->
+                        <div class="tbl-block good-block">
+                            <div class="tbl-header-bar good-h">
+                                <div class="tbl-title good-t">alumnos</div>
+                                <div class="tbl-right">
+                                    <span class="tbl-meta">PK: legajo</span>
+                                    <span
+                                        class="row-count"
+                                        id="cnt-good-alumnos"
+                                        >3 registros</span
+                                    >
+                                </div>
+                            </div>
+                            <div class="tbl-scroll">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                legajo
+                                                <span class="tag tag-pk"
+                                                    >PK</span
+                                                >
+                                            </th>
+                                            <th>nombre</th>
+                                            <th>apellido</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody-good-alumnos"></tbody>
+                                </table>
+                            </div>
+                            <div class="add-form good-form">
+                                <div class="fg">
+                                    <span class="fl">legajo * (PK)</span
+                                    ><input
+                                        class="fi fi-good"
+                                        id="g-al-legajo"
+                                        placeholder="A-004"
+                                        maxlength="20"
+                                        style="max-width: 92px"
+                                    />
+                                </div>
+                                <div class="fg">
+                                    <span class="fl">nombre *</span
+                                    ><input
+                                        class="fi fi-good"
+                                        id="g-al-nombre"
+                                        placeholder="ej: Carlos"
+                                        maxlength="50"
+                                    />
+                                </div>
+                                <div class="fg">
+                                    <span class="fl">apellido *</span
+                                    ><input
+                                        class="fi fi-good"
+                                        id="g-al-apellido"
+                                        placeholder="ej: Ruiz"
+                                        maxlength="50"
+                                    />
+                                </div>
+                                <button
+                                    class="btn-add good-btn"
+                                    onclick="addGoodAlumno()"
+                                >
+                                    ＋ Agregar
+                                </button>
+                            </div>
+                        </div>
 
-  <div class="compare-grid">
-    <!-- ALUMNOS BIEN -->
-    <div class="tbl-block good-block">
-      <div class="tbl-header-bar good-h">
-        <div class="tbl-title good-t">alumnos</div>
-        <div class="tbl-right">
-          <span class="tbl-meta">PK: legajo</span>
-          <span class="row-count" id="cnt-good-alumnos">3 registros</span>
+                        <!-- MATERIAS BIEN -->
+                        <div class="tbl-block good-block">
+                            <div class="tbl-header-bar good-h">
+                                <div class="tbl-title good-t">materias</div>
+                                <div class="tbl-right">
+                                    <span class="tbl-meta"
+                                        >PK: id_materia · manual</span
+                                    >
+                                    <span
+                                        class="row-count"
+                                        id="cnt-good-materias"
+                                        >3 registros</span
+                                    >
+                                </div>
+                            </div>
+                            <div class="tbl-scroll">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                id_materia
+                                                <span class="tag tag-pk"
+                                                    >PK</span
+                                                >
+                                            </th>
+                                            <th>nombre</th>
+                                            <th>cuatrimestre</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody-good-materias"></tbody>
+                                </table>
+                            </div>
+                            <div class="add-form good-form">
+                                <div class="fg">
+                                    <span class="fl">id_materia * (PK)</span
+                                    ><input
+                                        class="fi fi-good"
+                                        id="g-mat-id"
+                                        type="number"
+                                        min="1"
+                                        placeholder="ej: 4"
+                                        style="max-width: 80px"
+                                    />
+                                </div>
+                                <div class="fg">
+                                    <span class="fl">nombre *</span
+                                    ><input
+                                        class="fi fi-good"
+                                        id="g-mat-nombre"
+                                        placeholder="ej: Programación"
+                                        maxlength="80"
+                                    />
+                                </div>
+                                <div class="fg">
+                                    <span class="fl">cuatrimestre</span>
+                                    <select
+                                        class="fi fi-good"
+                                        id="g-mat-cuatri"
+                                    >
+                                        <option value="">—</option>
+                                        <option>1er cuatrimestre</option>
+                                        <option>2do cuatrimestre</option>
+                                        <option>Anual</option>
+                                    </select>
+                                </div>
+                                <button
+                                    class="btn-add good-btn"
+                                    onclick="addGoodMateria()"
+                                >
+                                    ＋ Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- INSCRIPCIONES -->
+                    <div class="section-label yellow" style="margin-top: 8px">
+                        Tabla intermedia — inscripciones (pivot)
+                    </div>
+
+                    <div class="tbl-block pivot-block">
+                        <div class="tbl-header-bar pivot-h">
+                            <div class="tbl-title pivot-t">inscripciones</div>
+                            <div class="tbl-right">
+                                <span class="tbl-meta"
+                                    >PK compuesta: (legajo, id_materia)</span
+                                >
+                                <span class="row-count" id="cnt-inscripciones"
+                                    >0 registros</span
+                                >
+                            </div>
+                        </div>
+                        <div class="tbl-scroll">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            legajo
+                                            <span class="tag tag-pk">PK</span
+                                            ><span class="tag tag-fkg">FK</span>
+                                        </th>
+                                        <th>
+                                            id_materia
+                                            <span class="tag tag-pk">PK</span
+                                            ><span class="tag tag-fkb">FK</span>
+                                        </th>
+                                        <th>fecha_inscripcion</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-inscripciones"></tbody>
+                            </table>
+                        </div>
+                        <div class="add-form pivot-form">
+                            <div class="fg">
+                                <span class="fl">alumno *</span>
+                                <select
+                                    class="fi fi-pivot"
+                                    id="g-insc-alumno"
+                                    style="max-width: 175px"
+                                >
+                                    <option value="">— elegir —</option>
+                                </select>
+                            </div>
+                            <div class="fg">
+                                <span class="fl">materia *</span>
+                                <select
+                                    class="fi fi-pivot"
+                                    id="g-insc-materia"
+                                    style="max-width: 175px"
+                                >
+                                    <option value="">— elegir —</option>
+                                </select>
+                            </div>
+                            <div class="fg">
+                                <span class="fl">fecha_inscripcion</span
+                                ><input
+                                    class="fi fi-pivot"
+                                    id="g-insc-fecha"
+                                    type="date"
+                                    style="max-width: 140px"
+                                />
+                            </div>
+                            <button
+                                class="btn-add pivot-btn"
+                                onclick="addInscripcion()"
+                            >
+                                + Inscribir
+                            </button>
+                        </div>
+                        <div class="hint-bar">
+                            <div class="hint-dot yellow"></div>
+                            Selects se actualizan automáticamente. FK y PK
+                            compuesta validadas. No podés eliminar
+                            alumnos/materias con inscripciones activas.
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="tbl-scroll"><table>
-        <thead><tr>
-          <th>legajo <span class="tag tag-pk">PK</span></th>
-          <th>nombre</th><th>apellido</th><th></th>
-        </tr></thead>
-        <tbody id="tbody-good-alumnos"></tbody>
-      </table></div>
-      <div class="add-form good-form">
-        <div class="fg"><span class="fl">legajo * (PK)</span><input class="fi fi-good" id="g-al-legajo" placeholder="A-004" maxlength="20" style="max-width:92px"></div>
-        <div class="fg"><span class="fl">nombre *</span><input class="fi fi-good" id="g-al-nombre" placeholder="ej: Carlos" maxlength="50"></div>
-        <div class="fg"><span class="fl">apellido *</span><input class="fi fi-good" id="g-al-apellido" placeholder="ej: Ruiz" maxlength="50"></div>
-        <button class="btn-add good-btn" onclick="addGoodAlumno()">＋ Agregar</button>
-      </div>
-    </div>
 
-    <!-- MATERIAS BIEN -->
-    <div class="tbl-block good-block">
-      <div class="tbl-header-bar good-h">
-        <div class="tbl-title good-t">materias</div>
-        <div class="tbl-right">
-          <span class="tbl-meta">PK: id_materia · manual</span>
-          <span class="row-count" id="cnt-good-materias">3 registros</span>
-        </div>
-      </div>
-      <div class="tbl-scroll"><table>
-        <thead><tr>
-          <th>id_materia <span class="tag tag-pk">PK</span></th>
-          <th>nombre</th><th>cuatrimestre</th><th></th>
-        </tr></thead>
-        <tbody id="tbody-good-materias"></tbody>
-      </table></div>
-      <div class="add-form good-form">
-        <div class="fg"><span class="fl">id_materia * (PK)</span><input class="fi fi-good" id="g-mat-id" type="number" min="1" placeholder="ej: 4" style="max-width:80px"></div>
-        <div class="fg"><span class="fl">nombre *</span><input class="fi fi-good" id="g-mat-nombre" placeholder="ej: Programación" maxlength="80"></div>
-        <div class="fg">
-          <span class="fl">cuatrimestre</span>
-          <select class="fi fi-good" id="g-mat-cuatri">
-            <option value="">—</option>
-            <option>1er cuatrimestre</option>
-            <option>2do cuatrimestre</option>
-            <option>Anual</option>
-          </select>
-        </div>
-        <button class="btn-add good-btn" onclick="addGoodMateria()">＋ Agregar</button>
-      </div>
-    </div>
-  </div>
+        <!-- TOASTS -->
+        <div class="toast-wrap" id="toasts"></div>
 
-  <!-- INSCRIPCIONES -->
-  <div class="section-label yellow" style="margin-top:8px;">Tabla intermedia — inscripciones (pivot)</div>
+        <script>
+            // ═══════════════════════════════════════════
+            //  TEMA
+            // ═══════════════════════════════════════════
+            function toggleTheme() {
+                const html = document.documentElement;
+                const dark = html.getAttribute("data-theme") === "dark";
+                html.setAttribute("data-theme", dark ? "light" : "dark");
+                document.getElementById("theme-label").textContent = dark
+                    ? "Claro"
+                    : "Oscuro";
+            }
 
-  <div class="tbl-block pivot-block">
-    <div class="tbl-header-bar pivot-h">
-      <div class="tbl-title pivot-t">inscripciones</div>
-      <div class="tbl-right">
-        <span class="tbl-meta">PK compuesta: (legajo, id_materia)</span>
-        <span class="row-count" id="cnt-inscripciones">0 registros</span>
-      </div>
-    </div>
-    <div class="tbl-scroll"><table>
-      <thead><tr>
-        <th>legajo <span class="tag tag-pk">PK</span><span class="tag tag-fkg">FK</span></th>
-        <th>id_materia <span class="tag tag-pk">PK</span><span class="tag tag-fkb">FK</span></th>
-        <th>fecha_inscripcion</th>
-        <th></th>
-      </tr></thead>
-      <tbody id="tbody-inscripciones"></tbody>
-    </table></div>
-    <div class="add-form pivot-form">
-      <div class="fg">
-        <span class="fl">alumno *</span>
-        <select class="fi fi-pivot" id="g-insc-alumno" style="max-width:175px"><option value="">— elegir —</option></select>
-      </div>
-      <div class="fg">
-        <span class="fl">materia *</span>
-        <select class="fi fi-pivot" id="g-insc-materia" style="max-width:175px"><option value="">— elegir —</option></select>
-      </div>
-      <div class="fg"><span class="fl">fecha_inscripcion</span><input class="fi fi-pivot" id="g-insc-fecha" type="date" style="max-width:140px"></div>
-      <button class="btn-add pivot-btn" onclick="addInscripcion()">+ Inscribir</button>
-    </div>
-    <div class="hint-bar">
-      <div class="hint-dot yellow"></div>
-      Selects se actualizan automáticamente. FK y PK compuesta validadas. No podés eliminar alumnos/materias con inscripciones activas.
-    </div>
-  </div>
+            // ═══════════════════════════════════════════
+            //  TABS
+            // ═══════════════════════════════════════════
+            function switchTab(w) {
+                document
+                    .getElementById("panel-bad")
+                    .classList.toggle("active", w === "bad");
+                document
+                    .getElementById("panel-good")
+                    .classList.toggle("active", w === "good");
+                document.getElementById("tab-bad").className =
+                    "tab-btn" + (w === "bad" ? " active-bad" : "");
+                document.getElementById("tab-good").className =
+                    "tab-btn" + (w === "good" ? " active-good" : "");
+            }
 
-</div></div></div>
+            // ═══════════════════════════════════════════
+            //  ESTADO
+            // ═══════════════════════════════════════════
+            let badPkMat = 4;
+            let badAlumnos = [
+                {
+                    legajo: "A-001",
+                    nombre: "Ana",
+                    apellido: "García",
+                    idMateria: 1,
+                },
+                {
+                    legajo: "A-002",
+                    nombre: "Luis",
+                    apellido: "Martínez",
+                    idMateria: 1,
+                },
+                {
+                    legajo: "A-003",
+                    nombre: "Mía",
+                    apellido: "López",
+                    idMateria: 2,
+                },
+            ];
+            let badMaterias = [
+                { id: 1, nombre: "Base de Datos", legajoAlumno: "A-001" },
+                { id: 2, nombre: "Algoritmos", legajoAlumno: "A-003" },
+                { id: 3, nombre: "Redes", legajoAlumno: null },
+            ];
 
-<!-- TOASTS -->
-<div class="toast-wrap" id="toasts"></div>
+            let goodPkMat = 4;
+            let goodAlumnos = [
+                { legajo: "A-001", nombre: "Ana", apellido: "García" },
+                { legajo: "A-002", nombre: "Luis", apellido: "Martínez" },
+                { legajo: "A-003", nombre: "Mía", apellido: "López" },
+            ];
+            let goodMaterias = [
+                { id: 1, nombre: "Base de Datos", cuatri: "1er cuatrimestre" },
+                { id: 2, nombre: "Algoritmos", cuatri: "2do cuatrimestre" },
+                { id: 3, nombre: "Redes", cuatri: "1er cuatrimestre" },
+            ];
+            let inscripciones = [];
 
-<script>
-// ═══════════════════════════════════════════
-//  TEMA
-// ═══════════════════════════════════════════
-function toggleTheme() {
-  const html = document.documentElement;
-  const dark = html.getAttribute('data-theme') === 'dark';
-  html.setAttribute('data-theme', dark ? 'light' : 'dark');
-  document.getElementById('theme-label').textContent = dark ? 'Claro' : 'Oscuro';
-}
+            // ═══════════════════════════════════════════
+            //  HELPERS
+            // ═══════════════════════════════════════════
+            const nullCell = (v) =>
+                v === null || v === undefined || v === ""
+                    ? '<span class="c-null">null</span>'
+                    : v;
 
-// ═══════════════════════════════════════════
-//  TABS
-// ═══════════════════════════════════════════
-function switchTab(w) {
-  document.getElementById('panel-bad').classList.toggle('active',  w==='bad');
-  document.getElementById('panel-good').classList.toggle('active', w==='good');
-  document.getElementById('tab-bad').className  = 'tab-btn' + (w==='bad'  ? ' active-bad'  : '');
-  document.getElementById('tab-good').className = 'tab-btn' + (w==='good' ? ' active-good' : '');
-}
+            function toast(msg, type = "ok") {
+                const ic = { ok: "ok", err: "err", warn: "!" };
+                const el = document.createElement("div");
+                el.className = `toast ${type}`;
+                el.innerHTML = `<span>${msg}</span>`;
+                document.getElementById("toasts").appendChild(el);
+                setTimeout(() => el.remove(), 3100);
+            }
+            function animRow(id, cls) {
+                const r = document.getElementById(id);
+                if (r) {
+                    r.classList.remove(
+                        "ani-green",
+                        "ani-red",
+                        "ani-yellow",
+                        "ani-out",
+                    );
+                    void r.offsetWidth;
+                    r.classList.add(cls);
+                }
+            }
+            function removeRow(id, cb) {
+                const r = document.getElementById(id);
+                if (r) {
+                    r.classList.add("ani-out");
+                    setTimeout(cb, 220);
+                } else cb();
+            }
+            function setCount(id, n) {
+                document.getElementById(id).textContent =
+                    `${n} registro${n !== 1 ? "s" : ""}`;
+            }
 
-// ═══════════════════════════════════════════
-//  ESTADO
-// ═══════════════════════════════════════════
-let badPkMat = 4;
-let badAlumnos = [
-  { legajo:'A-001', nombre:'Ana',  apellido:'García',   idMateria:1 },
-  { legajo:'A-002', nombre:'Luis', apellido:'Martínez', idMateria:1 },
-  { legajo:'A-003', nombre:'Mía',  apellido:'López',    idMateria:2 },
-];
-let badMaterias = [
-  { id:1, nombre:'Base de Datos', legajoAlumno:'A-001' },
-  { id:2, nombre:'Algoritmos',    legajoAlumno:'A-003' },
-  { id:3, nombre:'Redes',         legajoAlumno:null    },
-];
-
-let goodPkMat = 4;
-let goodAlumnos = [
-  { legajo:'A-001', nombre:'Ana',  apellido:'García'   },
-  { legajo:'A-002', nombre:'Luis', apellido:'Martínez' },
-  { legajo:'A-003', nombre:'Mía',  apellido:'López'    },
-];
-let goodMaterias = [
-  { id:1, nombre:'Base de Datos', cuatri:'1er cuatrimestre' },
-  { id:2, nombre:'Algoritmos',    cuatri:'2do cuatrimestre' },
-  { id:3, nombre:'Redes',         cuatri:'1er cuatrimestre' },
-];
-let inscripciones = [];
-
-// ═══════════════════════════════════════════
-//  HELPERS
-// ═══════════════════════════════════════════
-const nullCell = v => (v===null||v===undefined||v==='') ? '<span class="c-null">null</span>' : v;
-
-function toast(msg, type='ok') {
-  const ic = {ok:'ok',err:'err',warn:'!'};
-  const el = document.createElement('div');
-  el.className = `toast ${type}`;
-  el.innerHTML = `<span>${msg}</span>`;
-  document.getElementById('toasts').appendChild(el);
-  setTimeout(() => el.remove(), 3100);
-}
-function animRow(id, cls) {
-  const r = document.getElementById(id);
-  if(r){ r.classList.remove('ani-green','ani-red','ani-yellow','ani-out'); void r.offsetWidth; r.classList.add(cls); }
-}
-function removeRow(id, cb) {
-  const r = document.getElementById(id);
-  if(r){ r.classList.add('ani-out'); setTimeout(cb,220); } else cb();
-}
-function setCount(id, n) {
-  document.getElementById(id).textContent = `${n} registro${n!==1?'s':''}`;
-}
-
-// ═══════════════════════════════════════════
-//  RENDER — MAL
-// ═══════════════════════════════════════════
-function renderBadAlumnos() {
-  const tb = document.getElementById('tbody-bad-alumnos');
-  tb.innerHTML = '';
-  if (!badAlumnos.length) {
-    tb.innerHTML = '<tr class="empty-row"><td colspan="5">— sin registros —</td></tr>';
-  } else {
-    badAlumnos.forEach(a => {
-      const mat = badMaterias.find(m => m.id === a.idMateria);
-      const tr = document.createElement('tr');
-      tr.id = `bad-al-${a.legajo}`;
-      tr.innerHTML = `
+            // ═══════════════════════════════════════════
+            //  RENDER — MAL
+            // ═══════════════════════════════════════════
+            function renderBadAlumnos() {
+                const tb = document.getElementById("tbody-bad-alumnos");
+                tb.innerHTML = "";
+                if (!badAlumnos.length) {
+                    tb.innerHTML =
+                        '<tr class="empty-row"><td colspan="5">— sin registros —</td></tr>';
+                } else {
+                    badAlumnos.forEach((a) => {
+                        const mat = badMaterias.find(
+                            (m) => m.id === a.idMateria,
+                        );
+                        const tr = document.createElement("tr");
+                        tr.id = `bad-al-${a.legajo}`;
+                        tr.innerHTML = `
         <td class="c-pk">${a.legajo}</td>
         <td>${a.nombre}</td>
         <td>${a.apellido}</td>
-        <td class="c-fk-bad">${a.idMateria
-          ? `${a.idMateria} <span style="color:var(--muted);font-size:.7rem">(${mat?.nombre??'?'})</span>`
-          : '<span class="c-null">null</span>'}</td>
+        <td class="c-fk-bad">${
+            a.idMateria
+                ? `${a.idMateria} <span style="color:var(--muted);font-size:.7rem">(${mat?.nombre ?? "?"})</span>`
+                : '<span class="c-null">null</span>'
+        }</td>
         <td><button class="btn-del" onclick="delBadAlumno('${a.legajo}')">✕</button></td>`;
-      tb.appendChild(tr);
-    });
-  }
-  setCount('cnt-bad-alumnos', badAlumnos.length);
-  refreshBadSelects();
-}
+                        tb.appendChild(tr);
+                    });
+                }
+                setCount("cnt-bad-alumnos", badAlumnos.length);
+                refreshBadSelects();
+            }
 
-function renderBadMaterias() {
-  const tb = document.getElementById('tbody-bad-materias');
-  tb.innerHTML = '';
-  if (!badMaterias.length) {
-    tb.innerHTML = '<tr class="empty-row"><td colspan="4">— sin registros —</td></tr>';
-  } else {
-    badMaterias.forEach(m => {
-      const al = badAlumnos.find(a => a.legajo === m.legajoAlumno);
-      const tr = document.createElement('tr');
-      tr.id = `bad-mat-${m.id}`;
-      tr.innerHTML = `
+            function renderBadMaterias() {
+                const tb = document.getElementById("tbody-bad-materias");
+                tb.innerHTML = "";
+                if (!badMaterias.length) {
+                    tb.innerHTML =
+                        '<tr class="empty-row"><td colspan="4">— sin registros —</td></tr>';
+                } else {
+                    badMaterias.forEach((m) => {
+                        const al = badAlumnos.find(
+                            (a) => a.legajo === m.legajoAlumno,
+                        );
+                        const tr = document.createElement("tr");
+                        tr.id = `bad-mat-${m.id}`;
+                        tr.innerHTML = `
         <td class="c-pk">${m.id}</td>
         <td>${m.nombre}</td>
-        <td class="c-fk-bad">${m.legajoAlumno
-          ? `${m.legajoAlumno} <span style="color:var(--muted);font-size:.7rem">(${al?.nombre??'?'})</span>`
-          : '<span class="c-null">null</span>'}</td>
+        <td class="c-fk-bad">${
+            m.legajoAlumno
+                ? `${m.legajoAlumno} <span style="color:var(--muted);font-size:.7rem">(${al?.nombre ?? "?"})</span>`
+                : '<span class="c-null">null</span>'
+        }</td>
         <td><button class="btn-del" onclick="delBadMateria(${m.id})">✕</button></td>`;
-      tb.appendChild(tr);
-    });
-  }
-  setCount('cnt-bad-materias', badMaterias.length);
-  refreshBadSelects();
-}
+                        tb.appendChild(tr);
+                    });
+                }
+                setCount("cnt-bad-materias", badMaterias.length);
+                refreshBadSelects();
+            }
 
-function refreshBadSelects() {
-  const sM = document.getElementById('b-al-materia'); const pM = sM.value;
-  sM.innerHTML = '<option value="">null — sin materia</option>';
-  badMaterias.forEach(m => sM.appendChild(new Option(`${m.id} — ${m.nombre}`, m.id)));
-  if(pM) sM.value = pM;
+            function refreshBadSelects() {
+                const sM = document.getElementById("b-al-materia");
+                const pM = sM.value;
+                sM.innerHTML = '<option value="">null — sin materia</option>';
+                badMaterias.forEach((m) =>
+                    sM.appendChild(new Option(`${m.id} — ${m.nombre}`, m.id)),
+                );
+                if (pM) sM.value = pM;
 
-  const sA = document.getElementById('b-mat-alumno'); const pA = sA.value;
-  sA.innerHTML = '<option value="">null — sin alumno</option>';
-  badAlumnos.forEach(a => sA.appendChild(new Option(`${a.legajo} — ${a.nombre} ${a.apellido}`, a.legajo)));
-  if(pA) sA.value = pA;
-}
+                const sA = document.getElementById("b-mat-alumno");
+                const pA = sA.value;
+                sA.innerHTML = '<option value="">null — sin alumno</option>';
+                badAlumnos.forEach((a) =>
+                    sA.appendChild(
+                        new Option(
+                            `${a.legajo} — ${a.nombre} ${a.apellido}`,
+                            a.legajo,
+                        ),
+                    ),
+                );
+                if (pA) sA.value = pA;
+            }
 
-// ═══════════════════════════════════════════
-//  ADD / DEL — MAL
-// ═══════════════════════════════════════════
-function addBadAlumno() {
-  const legajo   = document.getElementById('b-al-legajo').value.trim().toUpperCase();
-  const nombre   = document.getElementById('b-al-nombre').value.trim();
-  const apellido = document.getElementById('b-al-apellido').value.trim();
-  const idM      = document.getElementById('b-al-materia').value;
+            // ═══════════════════════════════════════════
+            //  ADD / DEL — MAL
+            // ═══════════════════════════════════════════
+            function addBadAlumno() {
+                const legajo = document
+                    .getElementById("b-al-legajo")
+                    .value.trim()
+                    .toUpperCase();
+                const nombre = document
+                    .getElementById("b-al-nombre")
+                    .value.trim();
+                const apellido = document
+                    .getElementById("b-al-apellido")
+                    .value.trim();
+                const idM = document.getElementById("b-al-materia").value;
 
-  if(!legajo||!nombre||!apellido){ toast('Completá legajo, nombre y apellido.','err'); return; }
-  if(badAlumnos.find(a=>a.legajo===legajo)){
-    toast(`Violación de PK: el legajo <b>${legajo}</b> ya existe.`,'err'); return;
-  }
-  if(idM) {
-    const yaHay = badAlumnos.filter(a=>a.idMateria===Number(idM));
-    if(yaHay.length){
-      const mat = badMaterias.find(m=>m.id===Number(idM));
-      toast(`⚠️ <b>${mat?.nombre}</b> ya tiene ${yaHay.length} alumno(s) apuntando a ella.<br>Con FK directa no hay forma de distinguir cuál es "el" alumno de esa materia.`,'warn');
-    }
-  }
-  badAlumnos.push({ legajo, nombre, apellido, idMateria: idM?Number(idM):null });
-  renderBadAlumnos();
-  animRow(`bad-al-${legajo}`,'ani-red');
-  ['b-al-legajo','b-al-nombre','b-al-apellido'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('b-al-materia').value='';
-  toast(`Alumno <b>${nombre}</b> (legajo: ${legajo}) agregado.`);
-}
+                if (!legajo || !nombre || !apellido) {
+                    toast("Completá legajo, nombre y apellido.", "err");
+                    return;
+                }
+                if (badAlumnos.find((a) => a.legajo === legajo)) {
+                    toast(
+                        `Violación de PK: el legajo <b>${legajo}</b> ya existe.`,
+                        "err",
+                    );
+                    return;
+                }
+                if (idM) {
+                    const yaHay = badAlumnos.filter(
+                        (a) => a.idMateria === Number(idM),
+                    );
+                    if (yaHay.length) {
+                        const mat = badMaterias.find(
+                            (m) => m.id === Number(idM),
+                        );
+                        toast(
+                            `⚠️ <b>${mat?.nombre}</b> ya tiene ${yaHay.length} alumno(s) apuntando a ella.<br>Con FK directa no hay forma de distinguir cuál es "el" alumno de esa materia.`,
+                            "warn",
+                        );
+                    }
+                }
+                badAlumnos.push({
+                    legajo,
+                    nombre,
+                    apellido,
+                    idMateria: idM ? Number(idM) : null,
+                });
+                renderBadAlumnos();
+                animRow(`bad-al-${legajo}`, "ani-red");
+                ["b-al-legajo", "b-al-nombre", "b-al-apellido"].forEach(
+                    (id) => (document.getElementById(id).value = ""),
+                );
+                document.getElementById("b-al-materia").value = "";
+                toast(`Alumno <b>${nombre}</b> (legajo: ${legajo}) agregado.`);
+            }
 
-function delBadAlumno(legajo) {
-  const a = badAlumnos.find(x=>x.legajo===legajo);
-  removeRow(`bad-al-${legajo}`,()=>{
-    badAlumnos = badAlumnos.filter(x=>x.legajo!==legajo);
-    renderBadAlumnos();
-    toast(`Alumno <b>${a.nombre}</b> eliminado.`,'warn');
-  });
-}
+            function delBadAlumno(legajo) {
+                const a = badAlumnos.find((x) => x.legajo === legajo);
+                removeRow(`bad-al-${legajo}`, () => {
+                    badAlumnos = badAlumnos.filter((x) => x.legajo !== legajo);
+                    renderBadAlumnos();
+                    toast(`Alumno <b>${a.nombre}</b> eliminado.`, "warn");
+                });
+            }
 
-function addBadMateria() {
-  const idRaw  = document.getElementById('b-mat-id').value.trim();
-  const nombre = document.getElementById('b-mat-nombre').value.trim();
-  const legajoA = document.getElementById('b-mat-alumno').value;
+            function addBadMateria() {
+                const idRaw = document.getElementById("b-mat-id").value.trim();
+                const nombre = document
+                    .getElementById("b-mat-nombre")
+                    .value.trim();
+                const legajoA = document.getElementById("b-mat-alumno").value;
 
-  if(!idRaw || !nombre){ toast('El id y el nombre de la materia son obligatorios.','err'); return; }
-  const id = Number(idRaw);
-  if(!Number.isInteger(id) || id < 1){ toast('El id_materia debe ser un número entero positivo.','err'); return; }
-  if(badMaterias.find(m=>m.id===id)){
-    toast(`Violación de PK: el id_materia <b>${id}</b> ya existe.`,'err'); return;
-  }
-  if(legajoA){
-    const yaHay = badMaterias.filter(m=>m.legajoAlumno===legajoA);
-    if(yaHay.length){
-      const al = badAlumnos.find(a=>a.legajo===legajoA);
-      toast(`<b>${al?.nombre}</b> ya está asignado a otra materia.<br>Con FK directa, cada alumno solo puede "pertenecer" a una materia.`,'warn');
-    }
-  }
-  const nueva = { id, nombre, legajoAlumno:legajoA||null };
-  badMaterias.push(nueva);
-  renderBadMaterias();
-  animRow(`bad-mat-${nueva.id}`,'ani-red');
-  ['b-mat-id','b-mat-nombre'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('b-mat-alumno').value='';
-  toast(`Materia <b>${nombre}</b> agregada (id=${id}).`);
-}
+                if (!idRaw || !nombre) {
+                    toast(
+                        "El id y el nombre de la materia son obligatorios.",
+                        "err",
+                    );
+                    return;
+                }
+                const id = Number(idRaw);
+                if (!Number.isInteger(id) || id < 1) {
+                    toast(
+                        "El id_materia debe ser un número entero positivo.",
+                        "err",
+                    );
+                    return;
+                }
+                if (badMaterias.find((m) => m.id === id)) {
+                    toast(
+                        `Violación de PK: el id_materia <b>${id}</b> ya existe.`,
+                        "err",
+                    );
+                    return;
+                }
+                if (legajoA) {
+                    const yaHay = badMaterias.filter(
+                        (m) => m.legajoAlumno === legajoA,
+                    );
+                    if (yaHay.length) {
+                        const al = badAlumnos.find((a) => a.legajo === legajoA);
+                        toast(
+                            `<b>${al?.nombre}</b> ya está asignado a otra materia.<br>Con FK directa, cada alumno solo puede "pertenecer" a una materia.`,
+                            "warn",
+                        );
+                    }
+                }
+                const nueva = { id, nombre, legajoAlumno: legajoA || null };
+                badMaterias.push(nueva);
+                renderBadMaterias();
+                animRow(`bad-mat-${nueva.id}`, "ani-red");
+                ["b-mat-id", "b-mat-nombre"].forEach(
+                    (id) => (document.getElementById(id).value = ""),
+                );
+                document.getElementById("b-mat-alumno").value = "";
+                toast(`Materia <b>${nombre}</b> agregada (id=${id}).`);
+            }
 
-function delBadMateria(id) {
-  const m = badMaterias.find(x=>x.id===id);
-  removeRow(`bad-mat-${id}`,()=>{
-    badMaterias = badMaterias.filter(x=>x.id!==id);
-    renderBadMaterias();
-    toast(`Materia <b>${m.nombre}</b> eliminada.`,'warn');
-  });
-}
+            function delBadMateria(id) {
+                const m = badMaterias.find((x) => x.id === id);
+                removeRow(`bad-mat-${id}`, () => {
+                    badMaterias = badMaterias.filter((x) => x.id !== id);
+                    renderBadMaterias();
+                    toast(`Materia <b>${m.nombre}</b> eliminada.`, "warn");
+                });
+            }
 
-// ═══════════════════════════════════════════
-//  RENDER — BIEN
-// ═══════════════════════════════════════════
-function renderGoodAlumnos() {
-  const tb = document.getElementById('tbody-good-alumnos');
-  tb.innerHTML = '';
-  if(!goodAlumnos.length){
-    tb.innerHTML='<tr class="empty-row"><td colspan="4">— sin registros —</td></tr>';
-  } else {
-    goodAlumnos.forEach(a=>{
-      const tr=document.createElement('tr'); tr.id=`good-al-${a.legajo}`;
-      tr.innerHTML=`
+            // ═══════════════════════════════════════════
+            //  RENDER — BIEN
+            // ═══════════════════════════════════════════
+            function renderGoodAlumnos() {
+                const tb = document.getElementById("tbody-good-alumnos");
+                tb.innerHTML = "";
+                if (!goodAlumnos.length) {
+                    tb.innerHTML =
+                        '<tr class="empty-row"><td colspan="4">— sin registros —</td></tr>';
+                } else {
+                    goodAlumnos.forEach((a) => {
+                        const tr = document.createElement("tr");
+                        tr.id = `good-al-${a.legajo}`;
+                        tr.innerHTML = `
         <td class="c-pk">${a.legajo}</td>
         <td>${a.nombre}</td><td>${a.apellido}</td>
         <td><button class="btn-del" onclick="delGoodAlumno('${a.legajo}')">✕</button></td>`;
-      tb.appendChild(tr);
-    });
-  }
-  setCount('cnt-good-alumnos',goodAlumnos.length);
-  refreshGoodSelects();
-}
+                        tb.appendChild(tr);
+                    });
+                }
+                setCount("cnt-good-alumnos", goodAlumnos.length);
+                refreshGoodSelects();
+            }
 
-function renderGoodMaterias() {
-  const tb = document.getElementById('tbody-good-materias');
-  tb.innerHTML='';
-  if(!goodMaterias.length){
-    tb.innerHTML='<tr class="empty-row"><td colspan="4">— sin registros —</td></tr>';
-  } else {
-    goodMaterias.forEach(m=>{
-      const tr=document.createElement('tr'); tr.id=`good-mat-${m.id}`;
-      tr.innerHTML=`
+            function renderGoodMaterias() {
+                const tb = document.getElementById("tbody-good-materias");
+                tb.innerHTML = "";
+                if (!goodMaterias.length) {
+                    tb.innerHTML =
+                        '<tr class="empty-row"><td colspan="4">— sin registros —</td></tr>';
+                } else {
+                    goodMaterias.forEach((m) => {
+                        const tr = document.createElement("tr");
+                        tr.id = `good-mat-${m.id}`;
+                        tr.innerHTML = `
         <td class="c-pk">${m.id}</td>
         <td>${m.nombre}</td>
         <td>${nullCell(m.cuatri)}</td>
         <td><button class="btn-del" onclick="delGoodMateria(${m.id})">✕</button></td>`;
-      tb.appendChild(tr);
-    });
-  }
-  setCount('cnt-good-materias',goodMaterias.length);
-  refreshGoodSelects();
-}
+                        tb.appendChild(tr);
+                    });
+                }
+                setCount("cnt-good-materias", goodMaterias.length);
+                refreshGoodSelects();
+            }
 
-function renderInscripciones() {
-  const tb = document.getElementById('tbody-inscripciones');
-  tb.innerHTML='';
-  if(!inscripciones.length){
-    tb.innerHTML='<tr class="empty-row"><td colspan="4">— sin inscripciones todavía —</td></tr>';
-  } else {
-    inscripciones.forEach(ins=>{
-      const tr = document.createElement('tr');
-      tr.id = `insc-${ins.legajo}-${ins.idMateria}`;
-      tr.innerHTML=`
+            function renderInscripciones() {
+                const tb = document.getElementById("tbody-inscripciones");
+                tb.innerHTML = "";
+                if (!inscripciones.length) {
+                    tb.innerHTML =
+                        '<tr class="empty-row"><td colspan="4">— sin inscripciones todavía —</td></tr>';
+                } else {
+                    inscripciones.forEach((ins) => {
+                        const tr = document.createElement("tr");
+                        tr.id = `insc-${ins.legajo}-${ins.idMateria}`;
+                        tr.innerHTML = `
         <td class="c-fk-g">${ins.legajo}</td>
         <td class="c-fk-b">${ins.idMateria}</td>
         <td>${nullCell(ins.fecha)}</td>
         <td><button class="btn-del" onclick="delInscripcion('${ins.legajo}',${ins.idMateria})">x</button></td>`;
-      tb.appendChild(tr);
-    });
-  }
-  setCount('cnt-inscripciones',inscripciones.length);
-}
+                        tb.appendChild(tr);
+                    });
+                }
+                setCount("cnt-inscripciones", inscripciones.length);
+            }
 
-function refreshGoodSelects() {
-  const sA=document.getElementById('g-insc-alumno');  const pA=sA.value;
-  const sM=document.getElementById('g-insc-materia'); const pM=sM.value;
-  sA.innerHTML='<option value="">— elegir alumno —</option>';
-  goodAlumnos.forEach(a=>sA.appendChild(new Option(`${a.legajo} — ${a.nombre} ${a.apellido}`,a.legajo)));
-  if(pA) sA.value=pA;
-  sM.innerHTML='<option value="">— elegir materia —</option>';
-  goodMaterias.forEach(m=>sM.appendChild(new Option(`${m.id} — ${m.nombre}`,m.id)));
-  if(pM) sM.value=pM;
-}
+            function refreshGoodSelects() {
+                const sA = document.getElementById("g-insc-alumno");
+                const pA = sA.value;
+                const sM = document.getElementById("g-insc-materia");
+                const pM = sM.value;
+                sA.innerHTML = '<option value="">— elegir alumno —</option>';
+                goodAlumnos.forEach((a) =>
+                    sA.appendChild(
+                        new Option(
+                            `${a.legajo} — ${a.nombre} ${a.apellido}`,
+                            a.legajo,
+                        ),
+                    ),
+                );
+                if (pA) sA.value = pA;
+                sM.innerHTML = '<option value="">— elegir materia —</option>';
+                goodMaterias.forEach((m) =>
+                    sM.appendChild(new Option(`${m.id} — ${m.nombre}`, m.id)),
+                );
+                if (pM) sM.value = pM;
+            }
 
-// ═══════════════════════════════════════════
-//  ADD / DEL — BIEN
-// ═══════════════════════════════════════════
-function addGoodAlumno() {
-  const legajo   = document.getElementById('g-al-legajo').value.trim().toUpperCase();
-  const nombre   = document.getElementById('g-al-nombre').value.trim();
-  const apellido = document.getElementById('g-al-apellido').value.trim();
-  if(!legajo||!nombre||!apellido){ toast('Completá legajo, nombre y apellido.','err'); return; }
-  if(goodAlumnos.find(a=>a.legajo===legajo)){
-    toast(`Violación de PK: el legajo <b>${legajo}</b> ya existe.`,'err'); return;
-  }
-  goodAlumnos.push({legajo,nombre,apellido});
-  renderGoodAlumnos();
-  animRow(`good-al-${legajo}`,'ani-green');
-  ['g-al-legajo','g-al-nombre','g-al-apellido'].forEach(id=>document.getElementById(id).value='');
-  toast(`Alumno <b>${nombre}</b> (legajo: ${legajo}) agregado.`);
-}
+            // ═══════════════════════════════════════════
+            //  ADD / DEL — BIEN
+            // ═══════════════════════════════════════════
+            function addGoodAlumno() {
+                const legajo = document
+                    .getElementById("g-al-legajo")
+                    .value.trim()
+                    .toUpperCase();
+                const nombre = document
+                    .getElementById("g-al-nombre")
+                    .value.trim();
+                const apellido = document
+                    .getElementById("g-al-apellido")
+                    .value.trim();
+                if (!legajo || !nombre || !apellido) {
+                    toast("Completá legajo, nombre y apellido.", "err");
+                    return;
+                }
+                if (goodAlumnos.find((a) => a.legajo === legajo)) {
+                    toast(
+                        `Violación de PK: el legajo <b>${legajo}</b> ya existe.`,
+                        "err",
+                    );
+                    return;
+                }
+                goodAlumnos.push({ legajo, nombre, apellido });
+                renderGoodAlumnos();
+                animRow(`good-al-${legajo}`, "ani-green");
+                ["g-al-legajo", "g-al-nombre", "g-al-apellido"].forEach(
+                    (id) => (document.getElementById(id).value = ""),
+                );
+                toast(`Alumno <b>${nombre}</b> (legajo: ${legajo}) agregado.`);
+            }
 
-function delGoodAlumno(legajo) {
-  if(inscripciones.some(i=>i.legajo===legajo)){
-    toast('No se puede eliminar: tiene inscripciones activas.<br>Eliminá las inscripciones primero.','err'); return;
-  }
-  const a=goodAlumnos.find(x=>x.legajo===legajo);
-  removeRow(`good-al-${legajo}`,()=>{
-    goodAlumnos=goodAlumnos.filter(x=>x.legajo!==legajo);
-    renderGoodAlumnos();
-    toast(`Alumno <b>${a.nombre}</b> eliminado.`,'warn');
-  });
-}
+            function delGoodAlumno(legajo) {
+                if (inscripciones.some((i) => i.legajo === legajo)) {
+                    toast(
+                        "No se puede eliminar: tiene inscripciones activas.<br>Eliminá las inscripciones primero.",
+                        "err",
+                    );
+                    return;
+                }
+                const a = goodAlumnos.find((x) => x.legajo === legajo);
+                removeRow(`good-al-${legajo}`, () => {
+                    goodAlumnos = goodAlumnos.filter(
+                        (x) => x.legajo !== legajo,
+                    );
+                    renderGoodAlumnos();
+                    toast(`Alumno <b>${a.nombre}</b> eliminado.`, "warn");
+                });
+            }
 
-function addGoodMateria() {
-  const idRaw  = document.getElementById('g-mat-id').value.trim();
-  const nombre = document.getElementById('g-mat-nombre').value.trim();
-  const cuatri = document.getElementById('g-mat-cuatri').value;
+            function addGoodMateria() {
+                const idRaw = document.getElementById("g-mat-id").value.trim();
+                const nombre = document
+                    .getElementById("g-mat-nombre")
+                    .value.trim();
+                const cuatri = document.getElementById("g-mat-cuatri").value;
 
-  if(!idRaw || !nombre){ toast('El id y el nombre de la materia son obligatorios.','err'); return; }
-  const id = Number(idRaw);
-  if(!Number.isInteger(id) || id < 1){ toast('El id_materia debe ser un número entero positivo.','err'); return; }
-  if(goodMaterias.find(m=>m.id===id)){
-    toast(`Violación de PK: el id_materia <b>${id}</b> ya existe.`,'err'); return;
-  }
-  const n={id, nombre, cuatri};
-  goodMaterias.push(n);
-  renderGoodMaterias();
-  animRow(`good-mat-${n.id}`,'ani-green');
-  ['g-mat-id','g-mat-nombre'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('g-mat-cuatri').value='';
-  toast(`Materia <b>${nombre}</b> agregada (id=${id}).`);
-}
+                if (!idRaw || !nombre) {
+                    toast(
+                        "El id y el nombre de la materia son obligatorios.",
+                        "err",
+                    );
+                    return;
+                }
+                const id = Number(idRaw);
+                if (!Number.isInteger(id) || id < 1) {
+                    toast(
+                        "El id_materia debe ser un número entero positivo.",
+                        "err",
+                    );
+                    return;
+                }
+                if (goodMaterias.find((m) => m.id === id)) {
+                    toast(
+                        `Violación de PK: el id_materia <b>${id}</b> ya existe.`,
+                        "err",
+                    );
+                    return;
+                }
+                const n = { id, nombre, cuatri };
+                goodMaterias.push(n);
+                renderGoodMaterias();
+                animRow(`good-mat-${n.id}`, "ani-green");
+                ["g-mat-id", "g-mat-nombre"].forEach(
+                    (id) => (document.getElementById(id).value = ""),
+                );
+                document.getElementById("g-mat-cuatri").value = "";
+                toast(`Materia <b>${nombre}</b> agregada (id=${id}).`);
+            }
 
-function delGoodMateria(id) {
-  if(inscripciones.some(i=>i.idMateria===id)){
-    toast('No se puede eliminar: tiene inscripciones activas.<br>Eliminá las inscripciones primero.','err'); return;
-  }
-  const m=goodMaterias.find(x=>x.id===id);
-  removeRow(`good-mat-${id}`,()=>{
-    goodMaterias=goodMaterias.filter(x=>x.id!==id);
-    renderGoodMaterias();
-    toast(`Materia <b>${m.nombre}</b> eliminada.`,'warn');
-  });
-}
+            function delGoodMateria(id) {
+                if (inscripciones.some((i) => i.idMateria === id)) {
+                    toast(
+                        "No se puede eliminar: tiene inscripciones activas.<br>Eliminá las inscripciones primero.",
+                        "err",
+                    );
+                    return;
+                }
+                const m = goodMaterias.find((x) => x.id === id);
+                removeRow(`good-mat-${id}`, () => {
+                    goodMaterias = goodMaterias.filter((x) => x.id !== id);
+                    renderGoodMaterias();
+                    toast(`Materia <b>${m.nombre}</b> eliminada.`, "warn");
+                });
+            }
 
-function addInscripcion() {
-  const legajo = document.getElementById('g-insc-alumno').value;
-  const idM    = Number(document.getElementById('g-insc-materia').value);
-  const fecha  = document.getElementById('g-insc-fecha').value;
+            function addInscripcion() {
+                const legajo = document.getElementById("g-insc-alumno").value;
+                const idM = Number(
+                    document.getElementById("g-insc-materia").value,
+                );
+                const fecha = document.getElementById("g-insc-fecha").value;
 
-  if(!legajo||!idM){ toast('Seleccioná un alumno y una materia.','err'); return; }
-  if(!goodAlumnos.find(a=>a.legajo===legajo)){ toast(`FK inválida: legajo <b>${legajo}</b> no existe.`,'err'); return; }
-  if(!goodMaterias.find(m=>m.id===idM)){ toast(`FK inválida: materia id=${idM} no existe.`,'err'); return; }
-  if(inscripciones.find(i=>i.legajo===legajo&&i.idMateria===idM)){
-    const a=goodAlumnos.find(x=>x.legajo===legajo);
-    const m=goodMaterias.find(x=>x.id===idM);
-    toast(`Violación de PK compuesta: <b>${a.nombre}</b> ya está inscripto en <b>${m.nombre}</b>.`,'err'); return;
-  }
+                if (!legajo || !idM) {
+                    toast("Seleccioná un alumno y una materia.", "err");
+                    return;
+                }
+                if (!goodAlumnos.find((a) => a.legajo === legajo)) {
+                    toast(
+                        `FK inválida: legajo <b>${legajo}</b> no existe.`,
+                        "err",
+                    );
+                    return;
+                }
+                if (!goodMaterias.find((m) => m.id === idM)) {
+                    toast(`FK inválida: materia id=${idM} no existe.`, "err");
+                    return;
+                }
+                if (
+                    inscripciones.find(
+                        (i) => i.legajo === legajo && i.idMateria === idM,
+                    )
+                ) {
+                    const a = goodAlumnos.find((x) => x.legajo === legajo);
+                    const m = goodMaterias.find((x) => x.id === idM);
+                    toast(
+                        `Violación de PK compuesta: <b>${a.nombre}</b> ya está inscripto en <b>${m.nombre}</b>.`,
+                        "err",
+                    );
+                    return;
+                }
 
-  inscripciones.push({legajo, idMateria:idM, fecha:fecha||null});
-  renderInscripciones();
-  animRow(`insc-${legajo}-${idM}`,'ani-yellow');
-  ['g-insc-alumno','g-insc-materia'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('g-insc-fecha').value=new Date().toISOString().split('T')[0];
-  const a=goodAlumnos.find(x=>x.legajo===legajo);
-  const m=goodMaterias.find(x=>x.id===idM);
-  toast(`<b>${a.nombre}</b> inscripto en <b>${m.nombre}</b>.`);
-}
+                inscripciones.push({
+                    legajo,
+                    idMateria: idM,
+                    fecha: fecha || null,
+                });
+                renderInscripciones();
+                animRow(`insc-${legajo}-${idM}`, "ani-yellow");
+                ["g-insc-alumno", "g-insc-materia"].forEach(
+                    (id) => (document.getElementById(id).value = ""),
+                );
+                document.getElementById("g-insc-fecha").value = new Date()
+                    .toISOString()
+                    .split("T")[0];
+                const a = goodAlumnos.find((x) => x.legajo === legajo);
+                const m = goodMaterias.find((x) => x.id === idM);
+                toast(`<b>${a.nombre}</b> inscripto en <b>${m.nombre}</b>.`);
+            }
 
-function delInscripcion(legajo,idM) {
-  removeRow(`insc-${legajo}-${idM}`,()=>{
-    inscripciones=inscripciones.filter(i=>!(i.legajo===legajo&&i.idMateria===idM));
-    renderInscripciones();
-    toast('Inscripción eliminada.','warn');
-  });
-}
+            function delInscripcion(legajo, idM) {
+                removeRow(`insc-${legajo}-${idM}`, () => {
+                    inscripciones = inscripciones.filter(
+                        (i) => !(i.legajo === legajo && i.idMateria === idM),
+                    );
+                    renderInscripciones();
+                    toast("Inscripción eliminada.", "warn");
+                });
+            }
 
-// ═══════════════════════════════════════════
-//  ENTER KEY
-// ═══════════════════════════════════════════
-['b-al-apellido','b-al-legajo'].forEach(id=>
-  document.getElementById(id)?.addEventListener('keydown',e=>{if(e.key==='Enter')addBadAlumno();}));
-['b-mat-nombre','b-mat-id'].forEach(id=>
-  document.getElementById(id)?.addEventListener('keydown',e=>{if(e.key==='Enter')addBadMateria();}));
-['g-al-apellido','g-al-legajo'].forEach(id=>
-  document.getElementById(id)?.addEventListener('keydown',e=>{if(e.key==='Enter')addGoodAlumno();}));
-['g-mat-nombre','g-mat-id'].forEach(id=>
-  document.getElementById(id)?.addEventListener('keydown',e=>{if(e.key==='Enter')addGoodMateria();}));
+            // ═══════════════════════════════════════════
+            //  ENTER KEY
+            // ═══════════════════════════════════════════
+            ["b-al-apellido", "b-al-legajo"].forEach((id) =>
+                document
+                    .getElementById(id)
+                    ?.addEventListener("keydown", (e) => {
+                        if (e.key === "Enter") addBadAlumno();
+                    }),
+            );
+            ["b-mat-nombre", "b-mat-id"].forEach((id) =>
+                document
+                    .getElementById(id)
+                    ?.addEventListener("keydown", (e) => {
+                        if (e.key === "Enter") addBadMateria();
+                    }),
+            );
+            ["g-al-apellido", "g-al-legajo"].forEach((id) =>
+                document
+                    .getElementById(id)
+                    ?.addEventListener("keydown", (e) => {
+                        if (e.key === "Enter") addGoodAlumno();
+                    }),
+            );
+            ["g-mat-nombre", "g-mat-id"].forEach((id) =>
+                document
+                    .getElementById(id)
+                    ?.addEventListener("keydown", (e) => {
+                        if (e.key === "Enter") addGoodMateria();
+                    }),
+            );
 
-// ═══════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════
-renderBadAlumnos();
-renderBadMaterias();
-renderGoodAlumnos();
-renderGoodMaterias();
-renderInscripciones();
-document.getElementById('g-insc-fecha').value = new Date().toISOString().split('T')[0];
-</script>
-</body>
+            // ═══════════════════════════════════════════
+            //  INIT
+            // ═══════════════════════════════════════════
+            renderBadAlumnos();
+            renderBadMaterias();
+            renderGoodAlumnos();
+            renderGoodMaterias();
+            renderInscripciones();
+            document.getElementById("g-insc-fecha").value = new Date()
+                .toISOString()
+                .split("T")[0];
+        </script>
+    </body>
 </html>
